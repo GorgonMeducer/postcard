@@ -1,12 +1,17 @@
 {
-    "version": "0.2.0",
+    "version": "1.0.0",
     "configurations": [
         {
             "name": "build and run on macos (lldb)",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/arm_2d",
-            "args": ["-i capture.bmp -t story.txt"],
+            "args": [
+                "-p", 
+                "capture.bmp", 
+                "-t", 
+                "story.txt"
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -19,7 +24,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/arm_2d.exe",
-            "args": ["-i capture.bmp -t story.txt"],
+            "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -40,5 +45,24 @@
             ],
             "preLaunchTask": "Make"
         },
+        {
+            "name": "build and run Linux",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/arm_2d",
+            "args": [
+                "-p", 
+                "capture.bmp", 
+                "-t", 
+                "story.txt"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb-multiarch",
+            "preLaunchTask": "Make"
+        }
     ]
 }

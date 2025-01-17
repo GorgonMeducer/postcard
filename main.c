@@ -17,6 +17,8 @@
 
 /*============================ INCLUDES ======================================*/
 #include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
 #include "Virtual_TFT_Port.h"
 #include "arm_2d_helper.h"
 #include "arm_2d_scenes.h"
@@ -46,11 +48,88 @@
 /*============================ MACROS ========================================*/
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*============================ TYPES =========================================*/
+typedef volatile struct system_cfg_t {
+    struct {
+        const char *pchInputPicturePath;
+        const char *pchStoryPath;
+        bool bValid;
+    } Input;
+} system_cfg_t;
+
 /*============================ GLOBAL VARIABLES ==============================*/
+
+system_cfg_t SYSTEM_CFG = {0};
+
 /*============================ PROTOTYPES ====================================*/
 /*============================ LOCAL VARIABLES ===============================*/
 /*============================ IMPLEMENTATION ================================*/
 
+
+
+bool file_exists(const char *path, const char *pchMode) 
+{
+    FILE *fp = fopen(path, pchMode);
+    if (fp) {
+        fclose(fp);
+        return true;
+    }
+    return false;
+}
+
+static
+arm_2d_err_t process_args(int argc, char* argv[])
+{
+
+    bool bInputIsValid = true;
+    for (int n = 0; n < argc; n++) {
+        //printf("[%s]\r\n", argv[n]);
+
+        if (0 == n) {
+            continue;
+        }
+
+        if (0 == strncmp(argv[n], "-p", 2)) {
+            n++;
+            if (n >= argc) {
+                bInputIsValid = false;
+                break;
+            }
+
+            if (!file_exists(argv[n], "r")) {
+                printf("ERROR: Cannot find the input picture from \"%s\".", argv[n]);
+                bInputIsValid = false;
+                break;
+            }
+
+            SYSTEM_CFG.Input.pchInputPicturePath = argv[n];
+            continue;
+        }
+
+        if (0 == strncmp(argv[n], "-t", 2)) {
+            n++;
+            if (n >= argc) {
+                bInputIsValid = false;
+                break;
+            }
+
+            if (!file_exists(argv[n], "r")) {
+                printf("ERROR: Cannot find the input story from \"%s\".", argv[n]);
+                bInputIsValid = false;
+                break;
+            }
+
+            SYSTEM_CFG.Input.pchStoryPath = argv[n];
+            continue;
+        }
+    }
+
+    SYSTEM_CFG.Input.bValid = bInputIsValid;
+    if (!SYSTEM_CFG.Input.bValid) {
+        return ARM_2D_ERR_INVALID_PARAM;
+    }
+
+    return ARM_2D_ERR_NONE;
+}
 
 /*----------------------------------------------------------------------------
   Main function
@@ -67,9 +146,12 @@ int app_2d_main_thread (void *argument)
     return 0;
 }
 
-
 int main(int argc, char* argv[])
 {
+    if (ARM_2D_ERR_NONE != process_args(argc, argv)) {
+        return -1;
+    }
+
     VT_init();
 
     arm_irq_safe {
