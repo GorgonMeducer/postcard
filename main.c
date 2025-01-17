@@ -22,12 +22,6 @@
 #include "arm_2d_scenes.h"
 #include "arm_2d_disp_adapters.h"
 
-#ifdef RTE_Acceleration_Arm_2D_Extra_Benchmark
-#   include "arm_2d_benchmark.h"
-#endif
-
-#include "genshin_clock/arm_2d_scene_genshin_clock.h"
-
 #if defined(__clang__)
 #   pragma clang diagnostic push
 #   pragma clang diagnostic ignored "-Wunknown-warning-option"
@@ -64,18 +58,6 @@
 
 int app_2d_main_thread (void *argument)
 {
-#ifdef RTE_Acceleration_Arm_2D_Extra_Benchmark
-    arm_2d_run_benchmark();
-#else
-    
-    arm_2d_scene_genshin_clock_init(&DISP0_ADAPTER);
-
-    arm_2d_scene_player_set_switching_mode( &DISP0_ADAPTER,
-                                            ARM_2D_SCENE_SWITCH_MODE_FADE_WHITE);
-    arm_2d_scene_player_set_switching_period(&DISP0_ADAPTER, 3000);
-    
-    arm_2d_scene_player_switch_to_next_scene(&DISP0_ADAPTER);
-#endif
 
     while (1) {
         if (arm_fsm_rt_cpl == disp_adapter0_task()) {

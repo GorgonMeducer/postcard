@@ -41,12 +41,14 @@ static uint16_t s_tFramebuffer[3][VT_WIDTH * VT_HEIGHT];
 #elif VT_COLOR_DEPTH == 24 || VT_COLOR_DEPTH == 32
 #define DEV_2_VT_RGB(color)                 (color)
 #define VT_RGB_2_DEV(color)                 (color)
-
 static uint32_t s_tFramebuffer[3][VT_WIDTH * VT_HEIGHT];
 
 #endif
 
 #if VT_WIDTH >= 240 || VT_HEIGHT >= 240
+#   define VT_WINDOW_WIDTH     (VT_WIDTH / 4)
+#   define VT_WINDOW_HEIGHT    (VT_HEIGHT / 4)
+#elif VT_WIDTH >= 1024 || VT_HEIGHT >= 1024
 #   define VT_WINDOW_WIDTH     VT_WIDTH
 #   define VT_WINDOW_HEIGHT    VT_HEIGHT
 #else
@@ -185,7 +187,7 @@ static void monitor_sdl_init(void)
 
     SDL_SetEventFilter(quit_filter, NULL);
 
-    window = SDL_CreateWindow( "NotGenshinClock v1.0.0"
+    window = SDL_CreateWindow( "Postcard Generator v1.0.0"
                                 " ("
                                 ARM_TO_STRING(__DISP0_CFG_SCEEN_WIDTH__)
                                 "*"
@@ -209,7 +211,7 @@ static void monitor_sdl_init(void)
 
     SDL_RenderSetLogicalSize(renderer, __DISP0_CFG_SCEEN_WIDTH__, __DISP0_CFG_SCEEN_HEIGHT__);
 
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 
     /*Initialize the frame buffer to gray (77 is an empirical value) */
     memset(tft_fb, 77, VT_WIDTH * VT_HEIGHT * sizeof(uint32_t));

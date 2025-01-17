@@ -102,7 +102,7 @@ extern "C" {
 // <o>Height of the PFB block
 // <i> The height of your PFB block size used in disp0
 #ifndef __DISP0_CFG_PFB_BLOCK_HEIGHT__
-#   define __DISP0_CFG_PFB_BLOCK_HEIGHT__                          (__DISP0_CFG_SCEEN_HEIGHT__ / 10)
+#   define __DISP0_CFG_PFB_BLOCK_HEIGHT__                          __DISP0_CFG_SCEEN_HEIGHT__
 #endif
 
 // <o>Width Alignment of generated PFBs
@@ -225,7 +225,7 @@ extern "C" {
 // <q>Enable the helper service for 3FB (LCD Direct Mode)
 // <i> You can select this option when your LCD controller supports direct mode
 #ifndef __DISP0_CFG_ENABLE_3FB_HELPER_SERVICE__
-#   define __DISP0_CFG_ENABLE_3FB_HELPER_SERVICE__                 1
+#   define __DISP0_CFG_ENABLE_3FB_HELPER_SERVICE__                 0
 #endif
 
 // <q>Disable the default scene
