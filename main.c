@@ -112,7 +112,7 @@ arm_2d_err_t process_args(int argc, char* argv[])
             }
 
             if (!file_exists(argv[n], "r")) {
-                printf("ERROR: Cannot find the input story from \"%s\".", argv[n]);
+                printf("ERROR: Cannot find the input story from the given text file \"%s\".", argv[n]);
                 bInputIsValid = false;
                 break;
             }
