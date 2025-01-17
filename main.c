@@ -64,8 +64,6 @@ system_cfg_t SYSTEM_CFG = {0};
 /*============================ LOCAL VARIABLES ===============================*/
 /*============================ IMPLEMENTATION ================================*/
 
-
-
 bool file_exists(const char *path, const char *pchMode) 
 {
     FILE *fp = fopen(path, pchMode);

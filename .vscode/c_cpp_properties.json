@@ -1,32 +1,95 @@
 {
     "configurations": [
         {
-            "name": "Win32",
+            "name": "MacOS M1",
+            "compilerPath": "/usr/bin/clang",
+            "intelliSenseMode": "macos-clang-arm64",
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/sdl2/32/include",
-                "${workspaceFolder}/genshin_clock",
-                "${workspaceFolder}/genshin_clock/resources",
                 "${workspaceFolder}/platform",
                 "${workspaceFolder}/platform/math",
                 "${workspaceFolder}/platform/math/dsp",
+                "${workspaceFolder}/Arm-2D/Acceleration/Arm",
                 "${workspaceFolder}/Arm-2D/Helper/Include",
                 "${workspaceFolder}/Arm-2D/Library/Include",
+                "${workspaceFolder}/Arm-2D/Library/Source",
                 "${workspaceFolder}/Arm-2D/examples/common/benchmark",
-                "${workspaceFolder}/Arm-2D/examples/common/controls"
+                "${workspaceFolder}/Arm-2D/examples/common/controls",
+                "${workspaceFolder}/Arm-2D/examples/common/opcodes",
+                "${workspaceFolder}/Arm-2D/examples/demos",
+                "${workspaceFolder}/Arm-2D/examples/demos/monochrome",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/fitness",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/meter",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/watch",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/alarm_clock",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/histogram",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/fan",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/bubble_charging",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/animate_background",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/knob"
             ],
             "defines": [
+                "_RTE_",
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
                 "ARM_SECTION(x)=  ",
-                "__va_list=va_list"
+                "__va_list=va_list",
+                "RTE_Acceleration_Arm_2D_Helper_PFB",
+                "__ARM_2D_COMPILATION_UNIT",
+            ],
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++11",
+            "compilerArgs": [
+                "--include=arm_mve.h"
+            ],
+            "macFrameworkPath": ["/System/Library/Frameworks", "/Library/Frameworks"]
+          },
+          {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/sdl2/32/include",
+                "${workspaceFolder}/platform",
+                "${workspaceFolder}/platform/math",
+                "${workspaceFolder}/platform/math/dsp",
+                "${workspaceFolder}/Arm-2D/Acceleration/Arm",
+                "${workspaceFolder}/Arm-2D/Helper/Include",
+                "${workspaceFolder}/Arm-2D/Library/Include",
+                "${workspaceFolder}/Arm-2D/Library/Source",
+                "${workspaceFolder}/Arm-2D/examples/common/benchmark",
+                "${workspaceFolder}/Arm-2D/examples/common/controls",
+                "${workspaceFolder}/Arm-2D/examples/common/opcodes",
+                "${workspaceFolder}/Arm-2D/examples/demos",
+                "${workspaceFolder}/Arm-2D/examples/demos/monochrome",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/fitness",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/meter",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/watch",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/alarm_clock",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/histogram",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/fan",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/bubble_charging",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/animate_background",
+                "${workspaceFolder}/Arm-2D/examples/common/scenes/knob"
+            ],
+            "defines": [
+                "_RTE_",
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "ARM_SECTION(x)=  ",
+                "__va_list=va_list",
+                "RTE_Acceleration_Arm_2D_Helper_PFB",
+                "__ARM_2D_COMPILATION_UNIT"
             ],
             "compilerPath": "gcc.exe",
             "cStandard": "gnu11",
             "cppStandard": "gnu++11",
             "intelliSenseMode": "windows-gcc-x86",
-            "compilerArgs": [],
+            "compilerArgs": [
+                "--include=arm_mve.h"
+            ],
             "configurationProvider": "ms-vscode.makefile-tools"
         }
     ],
