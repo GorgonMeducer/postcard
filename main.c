@@ -58,7 +58,6 @@
 
 int app_2d_main_thread (void *argument)
 {
-
     while (1) {
         if (arm_fsm_rt_cpl == disp_adapter0_task()) {
             VT_sdl_flush(1);

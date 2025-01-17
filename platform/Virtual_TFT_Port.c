@@ -238,7 +238,6 @@ void VT_sdl_refresh_task(void)
         sdl_refr_cpl = true;
     #endif
 
-
         SDL_UpdateTexture(texture, NULL, tft_fb, VT_WIDTH * sizeof(uint32_t));
         SDL_RenderClear(renderer);
 
@@ -248,11 +247,9 @@ void VT_sdl_refresh_task(void)
     }
 
     SDL_Event event;
-    while(SDL_PollEvent(&event))
-    {
+    while(SDL_PollEvent(&event)) {
 
-        switch((&event)->type)
-        {
+        switch((&event)->type) {
             case SDL_MOUSEBUTTONUP:
                 if((&event)->button.button == SDL_BUTTON_LEFT)
                     left_button_is_down = false;
@@ -270,8 +267,7 @@ void VT_sdl_refresh_task(void)
                 break;
 
             case SDL_WINDOWEVENT:
-                switch((&event)->window.event)
-                {
+                switch((&event)->window.event) {
 #if SDL_VERSION_ATLEAST(2, 0, 5)
                     case SDL_WINDOWEVENT_TAKE_FOCUS:
 #endif
