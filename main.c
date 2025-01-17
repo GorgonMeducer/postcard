@@ -52,6 +52,7 @@ typedef volatile struct system_cfg_t {
     struct {
         const char *pchInputPicturePath;
         const char *pchStoryPath;
+        bool bUseA4;
         bool bValid;
     } Input;
 } system_cfg_t;
@@ -117,6 +118,12 @@ arm_2d_err_t process_args(int argc, char* argv[])
             }
 
             SYSTEM_CFG.Input.pchStoryPath = argv[n];
+            continue;
+        }
+
+        if (    (0 == strncmp(argv[n], "--A4", 2)) 
+            ||  (0 == strncmp(argv[n], "--a4", 2))) {
+            SYSTEM_CFG.Input.bUseA4 = true;
             continue;
         }
     }

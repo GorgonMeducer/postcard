@@ -10,7 +10,8 @@
                 "-p", 
                 "capture.bmp", 
                 "-t", 
-                "story.txt"
+                "story.txt",
+                "--A4"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
