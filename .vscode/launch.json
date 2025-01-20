@@ -8,7 +8,7 @@
             "program": "${workspaceFolder}/build/arm_2d",
             "args": [
                 "-p", 
-                "capture.bmp", 
+                "../test/monika.png", 
                 "-t", 
                 "story.txt",
                 "--A4"
@@ -53,9 +53,10 @@
             "program": "${workspaceFolder}/build/arm_2d",
             "args": [
                 "-p", 
-                "capture.bmp", 
+                "../test/monika.png", 
                 "-t", 
-                "story.txt"
+                "story.txt",
+                "--A4"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

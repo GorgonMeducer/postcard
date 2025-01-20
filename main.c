@@ -78,8 +78,12 @@ bool file_exists(const char *path, const char *pchMode)
 static
 arm_2d_err_t process_args(int argc, char* argv[])
 {
-
     bool bInputIsValid = true;
+
+    if (argc <= 1) {
+        return ARM_2D_ERR_MISSING_PARAM;
+    }
+
     for (int n = 0; n < argc; n++) {
         //printf("[%s]\r\n", argv[n]);
 
@@ -121,10 +125,16 @@ arm_2d_err_t process_args(int argc, char* argv[])
             continue;
         }
 
-        if (    (0 == strncmp(argv[n], "--A4", 2)) 
-            ||  (0 == strncmp(argv[n], "--a4", 2))) {
+        if (    (0 == strncmp(argv[n], "--A4", 4)) 
+            ||  (0 == strncmp(argv[n], "--a4", 4))) {
             SYSTEM_CFG.Input.bUseA4 = true;
             continue;
+        }
+
+        if (    (0 == strncmp(argv[n], "--help", 6)) 
+            ||  (0 == strncmp(argv[n], "-h", 2))) {
+            bInputIsValid = false;
+            return ARM_2D_ERR_MISSING_PARAM;
         }
     }
 
@@ -151,10 +161,29 @@ int app_2d_main_thread (void *argument)
     return 0;
 }
 
+static void print_help(void)
+{
+    printf("The Postcard is a command line tool that generates and prints out a postcard with given input picture and a story text. \r\n");
+    printf("\r\noptions:\r\n");
+    printf("\t-h, --help         show this help message and exit\r\n");
+    printf("\t-p [picture path]  Input picture (*.png)\r\n");
+    printf("\t-t [text path]     Input text file.\r\n");
+    printf("\t--A4, --a4         Use A4 papers rather than A5 papers for printing.\r\n");
+    printf("\r\n");
+}
+
 int main(int argc, char* argv[])
 {
-    if (ARM_2D_ERR_NONE != process_args(argc, argv)) {
-        return -1;
+    arm_2d_err_t tResult = process_args(argc, argv);
+    switch (tResult) {
+        case ARM_2D_ERR_NONE:
+            break;
+        case ARM_2D_ERR_MISSING_PARAM:
+            print_help();
+            //fall-through;
+        default:
+            return -1;
+            break;
     }
 
     VT_init();
