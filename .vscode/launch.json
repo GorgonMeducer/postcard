@@ -8,7 +8,7 @@
             "program": "${workspaceFolder}/build/arm_2d",
             "args": [
                 "-p", 
-                "test/monika.png", 
+                "test/monika.bmp", 
                 "-t", 
                 "test/story.txt",
                 "--A4"
@@ -25,7 +25,13 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/arm_2d.exe",
-            "args": [],
+            "args": [
+                "-p", 
+                "test/monika.bmp", 
+                "-t", 
+                "test/story.txt",
+                "--A4"
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -53,7 +59,7 @@
             "program": "${workspaceFolder}/build/arm_2d",
             "args": [
                 "-p", 
-                "test/monika.png", 
+                "test/monika.bmp", 
                 "-t", 
                 "test/story.txt",
                 "--A4"

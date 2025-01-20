@@ -24,6 +24,8 @@
 #include "arm_2d_scenes.h"
 #include "arm_2d_disp_adapters.h"
 
+#include "__arm_2d_impl.h"
+
 #if defined(__clang__)
 #   pragma clang diagnostic push
 #   pragma clang diagnostic ignored "-Wunknown-warning-option"
@@ -48,13 +50,23 @@
 /*============================ MACROS ========================================*/
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*============================ TYPES =========================================*/
-typedef volatile struct system_cfg_t {
+typedef struct system_cfg_t {
     struct {
-        const char *pchInputPicturePath;
-        const char *pchStoryPath;
+        char *pchInputPicturePath;
+        char *pchStoryPath;
         bool bUseA4;
         bool bValid;
     } Input;
+
+    struct {
+        char *pchStory;
+        size_t tSize;
+    } Story;
+
+    struct {
+        arm_2d_tile_t tTile;
+    } Picture;
+
 } system_cfg_t;
 
 /*============================ GLOBAL VARIABLES ==============================*/
@@ -177,8 +189,93 @@ static void print_help(void)
     printf("\r\n");
 }
 
+static size_t load_story(const char *pchPath, char **ppchOutput)
+{
+    FILE *fp = fopen(pchPath, "r");
+    do {
+        if (NULL == fp) {
+            break;
+        }
+        
+        fseek(fp, 0, SEEK_END);
+        fpos_t tPos = 0;
+        if (0 != fgetpos(fp, &tPos)) {
+            break;
+        }
+        
+        *ppchOutput = malloc(tPos);
+        if (NULL == *ppchOutput) {
+            break;
+        }
+
+        fseek(fp, 0, SEEK_SET);
+
+        return fread(*ppchOutput, 1, tPos, fp);
+    } while(0);
+
+    return 0;
+}
+
+static bool load_picture(const char *pchPath, arm_2d_tile_t *ptTile)
+{
+    memset(ptTile, 0, sizeof(arm_2d_tile_t));
+
+    SDL_Surface *ptImage = SDL_LoadBMP(pchPath);
+    do {
+        if (!ptImage) {
+            break;
+        }
+        ptTile->tRegion.tSize.iHeight = ptImage->h;
+        ptTile->tRegion.tSize.iWidth = ptImage->w;
+        ptTile->bIsRoot = true;
+        ptTile->bHasEnforcedColour = true;
+        ptTile->tInfo.tColourInfo.chScheme = ARM_2D_COLOUR_CCCA8888;
+
+        ptTile->pwBuffer = malloc( ptImage->h * ptImage->w * 4);
+        if (NULL == ptTile->pwBuffer) {
+            break;
+        }
+        
+        switch (ptImage->format->BitsPerPixel) {
+            case 8:
+                __arm_2d_impl_gray8_to_cccn888((uint8_t *)ptImage->pixels,
+                                               ptImage->pitch,
+                                               ptTile->pwBuffer,
+                                               ptTile->tRegion.tSize.iWidth,
+                                               &ptTile->tRegion.tSize);
+                break;
+            case 16:
+                if (ptImage->pitch != ptTile->tRegion.tSize.iWidth * 2) {
+                    return false;
+                }
+                __arm_2d_impl_rgb565_to_cccn888((uint16_t *)ptImage->pixels,
+                                                ptTile->tRegion.tSize.iWidth,
+                                                ptTile->pwBuffer,
+                                                ptTile->tRegion.tSize.iWidth,
+                                                &ptTile->tRegion.tSize);
+                break;
+            case 32:
+                memcpy(ptTile->pwBuffer, ptImage->pixels, ptImage->h * ptImage->w * 4);
+                break;
+            default:
+            case 24:
+                return false;
+        }
+
+        SDL_FreeSurface(ptImage);
+
+        return true;
+
+    } while(0);
+
+    return false;
+}
+
+
 int main(int argc, char* argv[])
 {
+    int ret = 0;
+
     arm_2d_err_t tResult = process_args(argc, argv);
     switch (tResult) {
         case ARM_2D_ERR_NONE:
@@ -199,16 +296,50 @@ int main(int argc, char* argv[])
 
     disp_adapter0_init();
 
-    SDL_CreateThread(app_2d_main_thread, "arm-2d thread", NULL);
-
-    while (1) {
-        if(!VT_sdl_refresh_task()){
+    
+    do {
+        /* load story */
+        SYSTEM_CFG.Story.tSize = load_story(SYSTEM_CFG.Input.pchStoryPath, 
+                                            (char **)&SYSTEM_CFG.Story.pchStory);
+        if (0 == SYSTEM_CFG.Story.tSize) {
+            printf("ERROR: Cannot read the story or the story file is empty: %s\r\n", SYSTEM_CFG.Input.pchStoryPath);
+            ret = -1;
             break;
         }
+
+        /* load png */
+
+        if (!load_picture(SYSTEM_CFG.Input.pchInputPicturePath,
+                         &SYSTEM_CFG.Picture.tTile)) {
+            printf("ERROR: failed to load bmp file, %s\n", SDL_GetError());
+            ret = -1;
+            break;
+        };
+
+        /* start arm-2d task */
+
+        SDL_CreateThread(app_2d_main_thread, "arm-2d thread", NULL);
+        while (1) {
+            if(!VT_sdl_refresh_task()){
+                break;
+            }
+        }
+
+    } while(0);
+
+    /* release resources */
+    if (NULL != SYSTEM_CFG.Story.pchStory) {
+        free(SYSTEM_CFG.Story.pchStory);
+        SYSTEM_CFG.Story.pchStory = NULL;
+        SYSTEM_CFG.Story.tSize = 0;
+    }
+    if (NULL != SYSTEM_CFG.Picture.tTile.pchBuffer) {
+        free(SYSTEM_CFG.Picture.tTile.pchBuffer);
+        SYSTEM_CFG.Picture.tTile.pchBuffer = NULL;
     }
 
     VT_deinit();
-    return 0;
+    return ret;
 }
 
 #if defined(__clang__)
