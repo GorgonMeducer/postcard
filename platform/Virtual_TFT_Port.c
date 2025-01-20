@@ -68,6 +68,7 @@ uintptr_t __DISP_ADAPTER0_3FB_FB2_ADDRESS__;
 static volatile bool sdl_inited = false;
 static volatile bool sdl_refr_cpl = false;
 static volatile bool sdl_quit_qry = false;
+static volatile bool sdl_joined = false;
 
 static bool left_button_is_down = false;
 static int16_t last_x = 0;
@@ -82,7 +83,6 @@ extern void VT_Clear(color_typedef color);
 extern bool VT_Mouse_Get_Point(int16_t *x,int16_t *y);
 
 
-
 bool VT_mouse_get_location(arm_2d_location_t *ptLocation)
 {
     assert(NULL != ptLocation);
@@ -91,6 +91,7 @@ bool VT_mouse_get_location(arm_2d_location_t *ptLocation)
     return left_button_is_down;
 }
 
+#if 0
 int quit_filter(void * userdata, SDL_Event * event)
 {
     (void)userdata;
@@ -101,6 +102,7 @@ int quit_filter(void * userdata, SDL_Event * event)
 
     return 1;
 }
+#endif
 
 typedef struct RecursiveMutex {
     SDL_mutex *mutex;
@@ -108,7 +110,8 @@ typedef struct RecursiveMutex {
     int lock_count;
 } RecursiveMutex;
 
-RecursiveMutex* RecursiveMutex_Create(void) {
+RecursiveMutex* RecursiveMutex_Create(void) 
+{
     RecursiveMutex* rmutex = (RecursiveMutex*)malloc(sizeof(RecursiveMutex));
     rmutex->mutex = SDL_CreateMutex();
     rmutex->owner = 0;
@@ -185,7 +188,7 @@ static void monitor_sdl_init(void)
 
     s_ptGlobalMutex = RecursiveMutex_Create();
 
-    SDL_SetEventFilter(quit_filter, NULL);
+    //SDL_SetEventFilter(quit_filter, NULL);
 
     window = SDL_CreateWindow( "Postcard Generator v1.0.0"
                                 " ("
@@ -219,7 +222,7 @@ static void monitor_sdl_init(void)
     sdl_inited = true;
 }
 
-void VT_sdl_refresh_task(void)
+bool VT_sdl_refresh_task(void)
 {
     if (arm_2d_helper_is_time_out(1000/60)) {
 
@@ -250,6 +253,10 @@ void VT_sdl_refresh_task(void)
     while(SDL_PollEvent(&event)) {
 
         switch((&event)->type) {
+            case SDL_QUIT:
+                sdl_quit_qry = true;
+                sdl_joined = false;
+                break;
             case SDL_MOUSEBUTTONUP:
                 if((&event)->button.button == SDL_BUTTON_LEFT)
                     left_button_is_down = false;
@@ -286,11 +293,18 @@ void VT_sdl_refresh_task(void)
                 break;
         }
     }
+
+    return !sdl_joined;
 }
 
 bool VT_is_request_quit(void)
 {
-    return sdl_quit_qry;
+    if (sdl_quit_qry) {
+        sdl_quit_qry = false;
+        sdl_joined = true;
+        return true;
+    }
+    return false;
 }
 
 void VT_deinit(void)

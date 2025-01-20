@@ -141,6 +141,9 @@ arm_2d_err_t process_args(int argc, char* argv[])
     SYSTEM_CFG.Input.bValid = bInputIsValid;
     if (!SYSTEM_CFG.Input.bValid) {
         return ARM_2D_ERR_INVALID_PARAM;
+    } else if ((NULL == SYSTEM_CFG.Input.pchInputPicturePath)
+            || (NULL == SYSTEM_CFG.Input.pchStoryPath)) {
+        return ARM_2D_ERR_MISSING_PARAM;
     }
 
     return ARM_2D_ERR_NONE;
@@ -153,11 +156,13 @@ arm_2d_err_t process_args(int argc, char* argv[])
 int app_2d_main_thread (void *argument)
 {
     while (1) {
+        if (VT_is_request_quit()) {
+            break;
+        }
         if (arm_fsm_rt_cpl == disp_adapter0_task()) {
             VT_sdl_flush(1);
         }
     }
-
     return 0;
 }
 
@@ -197,8 +202,7 @@ int main(int argc, char* argv[])
     SDL_CreateThread(app_2d_main_thread, "arm-2d thread", NULL);
 
     while (1) {
-        VT_sdl_refresh_task();
-        if(VT_is_request_quit()){
+        if(!VT_sdl_refresh_task()){
             break;
         }
     }

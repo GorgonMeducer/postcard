@@ -8,9 +8,9 @@
             "program": "${workspaceFolder}/build/arm_2d",
             "args": [
                 "-p", 
-                "../test/monika.png", 
+                "test/monika.png", 
                 "-t", 
-                "story.txt",
+                "test/story.txt",
                 "--A4"
             ],
             "stopAtEntry": false,
@@ -53,9 +53,9 @@
             "program": "${workspaceFolder}/build/arm_2d",
             "args": [
                 "-p", 
-                "../test/monika.png", 
+                "test/monika.png", 
                 "-t", 
-                "story.txt",
+                "test/story.txt",
                 "--A4"
             ],
             "stopAtEntry": false,
