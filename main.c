@@ -23,6 +23,7 @@
 #include "arm_2d_helper.h"
 #include "arm_2d_scenes.h"
 #include "arm_2d_disp_adapters.h"
+#include "arm_2d_scene_front.h"
 
 #include "__arm_2d_impl.h"
 
@@ -65,8 +66,8 @@ typedef struct system_cfg_t {
 
     struct {
         arm_2d_tile_t tTile;
+        arm_2d_tile_t tMaskTile;
     } Picture;
-
 } system_cfg_t;
 
 /*============================ GLOBAL VARIABLES ==============================*/
@@ -167,6 +168,8 @@ arm_2d_err_t process_args(int argc, char* argv[])
 
 int app_2d_main_thread (void *argument)
 {
+    arm_2d_scene_front_init(&DISP0_ADAPTER);
+
     while (1) {
         if (VT_is_request_quit()) {
             break;
@@ -216,9 +219,30 @@ static size_t load_story(const char *pchPath, char **ppchOutput)
     return 0;
 }
 
-static bool load_picture(const char *pchPath, arm_2d_tile_t *ptTile)
+void __ccc888_to_cccn888(uint8_t *pchSrc, int16_t iPitch, uint32_t *pwDes, int16_t iWidth, int16_t iHeight)
+{
+    for (int16_t y = 0; y < iHeight; y++) {
+        uint8_t *pchLineSrc = pchSrc;
+        uint32_t *pwLineDes = pwDes;
+
+        for (int16_t x = 0; x < iWidth; x++) {
+            ((uint8_t *)pwLineDes)[0] = *pchLineSrc++;
+            ((uint8_t *)pwLineDes)[1] = *pchLineSrc++;
+            ((uint8_t *)pwLineDes)[2] = *pchLineSrc++;
+            ((uint8_t *)pwLineDes)[3] = 0xFF;
+
+            pwLineDes++;
+        }
+
+        pchSrc += iPitch;
+        pwDes += iWidth;
+    }
+}
+
+static bool load_picture(const char *pchPath, arm_2d_tile_t *ptTile, arm_2d_tile_t *ptMask)
 {
     memset(ptTile, 0, sizeof(arm_2d_tile_t));
+    memset(ptMask, 0, sizeof(arm_2d_tile_t));
 
     SDL_Surface *ptImage = SDL_LoadBMP(pchPath);
     do {
@@ -254,13 +278,26 @@ static bool load_picture(const char *pchPath, arm_2d_tile_t *ptTile)
                                                 ptTile->tRegion.tSize.iWidth,
                                                 &ptTile->tRegion.tSize);
                 break;
+            case 24:
+                __ccc888_to_cccn888(ptImage->pixels,
+                                    ptImage->pitch, 
+                                    ptTile->pwBuffer, 
+                                    ptImage->w,
+                                    ptImage->h);
+                break;
             case 32:
                 memcpy(ptTile->pwBuffer, ptImage->pixels, ptImage->h * ptImage->w * 4);
                 break;
             default:
-            case 24:
                 return false;
         }
+
+        ptMask->tRegion.tSize.iHeight = ptImage->h;
+        ptMask->tRegion.tSize.iWidth = ptImage->w;
+        ptMask->bIsRoot = true;
+        ptMask->bHasEnforcedColour = true;
+        ptMask->tInfo.tColourInfo.chScheme = ARM_2D_CHANNEL_8in32;
+        ptMask->nAddress = ptTile->nAddress + 3;
 
         SDL_FreeSurface(ptImage);
 
@@ -295,7 +332,6 @@ int main(int argc, char* argv[])
     }
 
     disp_adapter0_init();
-
     
     do {
         /* load story */
@@ -310,7 +346,8 @@ int main(int argc, char* argv[])
         /* load png */
 
         if (!load_picture(SYSTEM_CFG.Input.pchInputPicturePath,
-                         &SYSTEM_CFG.Picture.tTile)) {
+                         &SYSTEM_CFG.Picture.tTile,
+                         &SYSTEM_CFG.Picture.tMaskTile)) {
             printf("ERROR: failed to load bmp file, %s\n", SDL_GetError());
             ret = -1;
             break;

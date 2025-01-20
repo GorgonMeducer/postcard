@@ -1,6 +1,7 @@
 #======================================================================================================================#
 CC_SRC  := $(wildcard *.c)
 CC_SRC  += $(wildcard platform/*.c)
+CC_SRC  += $(wildcard resources/*.c)
 CC_SRC  += $(wildcard platform/math/*.c)
 CC_SRC  += $(wildcard genshin_clock/*.c)
 CC_SRC  += $(wildcard genshin_clock/resources/*.c)

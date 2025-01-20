@@ -8,7 +8,7 @@
             "program": "${workspaceFolder}/build/arm_2d",
             "args": [
                 "-p", 
-                "test/monika.bmp", 
+                "test/photo.bmp", 
                 "-t", 
                 "test/story.txt",
                 "--A4"
