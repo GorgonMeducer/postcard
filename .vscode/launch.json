@@ -10,9 +10,8 @@
                 "-p", 
                 "test/photo.bmp", 
                 "-t", 
-                "test/story.txt",
-                "--A4",
-                "--dryrun",
+                "test/story.txt"
+                //,"--dryrun",
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -31,7 +30,7 @@
                 "test/photo.bmp",  
                 "-t", 
                 "test/story.txt",
-                "--A4"
+                "--dryrun",
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -63,7 +62,7 @@
                 "test/photo.bmp", 
                 "-t", 
                 "test/story.txt",
-                "--A4"
+                "--dryrun",
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
