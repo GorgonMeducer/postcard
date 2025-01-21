@@ -229,28 +229,32 @@ static void print_help(void)
 static size_t load_story(const char *pchPath, char **ppchOutput)
 {
     FILE *fp = fopen(pchPath, "r");
-    do {
-        if (NULL == fp) {
-            break;
-        }
-        
-        fseek(fp, 0, SEEK_END);
-        fpos_t tPos = 0;
-        if (0 != fgetpos(fp, &tPos)) {
-            break;
-        }
-        
-        *ppchOutput = malloc(tPos);
-        if (NULL == *ppchOutput) {
-            break;
-        }
+    if (fp == NULL) {
+        perror("Error opening file");
+        return 0;
+    }
 
-        fseek(fp, 0, SEEK_SET);
+    fseek(fp, 0, SEEK_END);
+    long file_size = ftell(fp);
+    if (file_size == -1) {
+        perror("Error getting file size");
+        fclose(fp);
+        return 0;
+    }
 
-        return fread(*ppchOutput, 1, tPos, fp);
-    } while(0);
+    *ppchOutput = (char *)malloc((size_t)file_size + 1);
+    if (*ppchOutput == NULL) {
+        perror("Memory allocation failed");
+        fclose(fp);
+        return 0;
+    }
 
-    return 0;
+    fseek(fp, 0, SEEK_SET);
+    size_t bytes_read = fread(*ppchOutput, 1, (size_t)file_size, fp);
+    (*ppchOutput)[bytes_read] = '\0';
+
+    fclose(fp);
+    return bytes_read;
 }
 
 void __ccc888_to_cccn888(uint8_t *pchSrc, int16_t iPitch, uint32_t *pwDes, int16_t iWidth, int16_t iHeight)
@@ -428,7 +432,7 @@ int main(int argc, char* argv[])
             static char s_chCommandLine[256] = {0};
             snprintf(  s_chCommandLine, 
                         dimof(s_chCommandLine), 
-                        "magick %s %s %s",
+                        "convert %s %s %s",
                         SYSTEM_CFG.Output.chFrontFileName,
                         SYSTEM_CFG.Output.chBackFileName,
                         SYSTEM_CFG.Output.chCombinedFileName);
