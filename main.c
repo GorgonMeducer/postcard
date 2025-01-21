@@ -88,6 +88,21 @@ bool file_exists(const char *path, const char *pchMode)
     return false;
 }
 
+void run_os_command(const char *pchCommandLine) {
+    static char s_chBuffer[4096];
+    FILE *ptPipe = popen(pchCommandLine, "r");
+    if (!ptPipe) {
+        printf("Failed to execute command: [%s]\r\n", pchCommandLine);
+        return;
+    }
+
+    while (fgets(s_chBuffer, sizeof(s_chBuffer), ptPipe) != NULL) {
+        printf("%s", s_chBuffer);
+    }
+
+    pclose(ptPipe);
+}
+
 static
 arm_2d_err_t process_args(int argc, char* argv[])
 {
