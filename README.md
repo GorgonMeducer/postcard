@@ -10,7 +10,7 @@ This example project currently support Windows, Linux and MacOS. Please follow t
 First, please clone the project to your local machine. You can do this by running the following command in your terminal:
 
 ```bash
-git clone --recursive https://github.com/GorgonMeducer/NotGenshinClock.git
+git clone --recursive https://github.com/GorgonMeducer/postcard.git
 ```
 
 The `--recursive` option is used to clone all the submodules included in the project.
@@ -66,7 +66,7 @@ sudo apt-get update && sudo apt-get install -y build-essential libsdl2-dev gdb-m
 
 Finally, please open the project in VS Code. You can do this by choosing "**Open Workspace from File**"  in the File menu in VS Code and then selecting the workspace file `NotGenshinClock.code-workspace` in the `NotGenshinClock` folder that you have just cloned.
 
-In "**Run and Debug**" panel, you can run the project via "**build and run x86(32)**" or you can press "**F5**" to launch a debug session.
+In "**Run and Debug**" panel, you can run the project via "**build and run Linux**" or you can press "**F5**" to launch a debug session.
 
 ![BuildAndRun](./doc/pictures/build_and_run.png) 
 
@@ -79,7 +79,7 @@ In "**Run and Debug**" panel, you can run the project via "**build and run x86(3
 First, please clone the project to your local machine. You can do this by running the following command in your terminal:
 
 ```bash
-git clone --recursive https://github.com/GorgonMeducer/NotGenshinClock.git
+git clone --recursive https://github.com/GorgonMeducer/postcard.git
 ```
 
 The `--recursive` option is used to clone all the submodules included in the project.
