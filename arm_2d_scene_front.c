@@ -21,6 +21,8 @@
 #define __USER_SCENE_FRONT_IMPLEMENT__
 #include "arm_2d_scene_front.h"
 
+#include "arm_2d_scene_back.h"
+
 #if defined(RTE_Acceleration_Arm_2D_Helper_PFB)
 
 #include <stdlib.h>
@@ -176,12 +178,8 @@ static void __on_scene_front_frame_complete(arm_2d_scene_t *ptScene)
     user_scene_front_t *ptThis = (user_scene_front_t *)ptScene;
     ARM_2D_UNUSED(ptThis);
 
-#if 0
-    /* switch to next scene after 3s */
-    if (arm_2d_helper_is_time_out(3000, &this.lTimestamp[0])) {
-        arm_2d_scene_player_switch_to_next_scene(ptScene->ptPlayer);
-    }
-#endif
+    arm_2d_scene_player_switch_to_next_scene(
+                            this.use_as__arm_2d_scene_t.ptPlayer);
 }
 
 static void __before_scene_front_switching_out(arm_2d_scene_t *ptScene)
@@ -189,6 +187,7 @@ static void __before_scene_front_switching_out(arm_2d_scene_t *ptScene)
     user_scene_front_t *ptThis = (user_scene_front_t *)ptScene;
     ARM_2D_UNUSED(ptThis);
 
+    arm_2d_scene_back_init(this.use_as__arm_2d_scene_t.ptPlayer);
 }
 
 static
@@ -316,7 +315,7 @@ user_scene_front_t *__arm_2d_scene_front_init(   arm_2d_scene_player_t *ptDispAd
             //.fnOnBGStart    = &__on_scene_front_background_start,
             //.fnOnBGComplete = &__on_scene_front_background_complete,
             .fnOnFrameStart = &__on_scene_front_frame_start,
-            //.fnBeforeSwitchOut = &__before_scene_front_switching_out,
+            .fnBeforeSwitchOut = &__before_scene_front_switching_out,
             .fnOnFrameCPL   = &__on_scene_front_frame_complete,
             .fnDepose       = &__on_scene_front_depose,
 
