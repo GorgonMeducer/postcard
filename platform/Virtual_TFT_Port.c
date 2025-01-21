@@ -223,7 +223,7 @@ static void monitor_sdl_init(void)
                                 ,
                                 SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                 VT_WINDOW_WIDTH, VT_WINDOW_HEIGHT, 
-                                SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);       /*last param. SDL_WINDOW_BORDERLESS to hide borders*/
+                                SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_BORDERLESS);       /*last param. SDL_WINDOW_BORDERLESS to hide borders*/
 
 #if VT_VIRTUAL_MACHINE
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);

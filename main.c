@@ -57,6 +57,7 @@ typedef struct system_cfg_t {
         char *pchStoryPath;
         bool bUseA4;
         bool bValid;
+        bool bDryRun;
     } Input;
 
     struct {
@@ -171,6 +172,11 @@ arm_2d_err_t process_args(int argc, char* argv[])
             continue;
         }
 
+        if ( 0 == strncmp(argv[n], "--dryrun", 8)) {
+            SYSTEM_CFG.Input.bDryRun = true;
+            continue;
+        }
+
         if (    (0 == strncmp(argv[n], "--help", 6)) 
             ||  (0 == strncmp(argv[n], "-h", 2))) {
             bInputIsValid = false;
@@ -216,6 +222,7 @@ static void print_help(void)
     printf("\t-p [picture path]  Input picture (*.png)\r\n");
     printf("\t-t [text path]     Input text file.\r\n");
     printf("\t--A4, --a4         Use A4 papers rather than A5 papers for printing.\r\n");
+    printf("\t--dryrun           Generate PDF and skip printing.\r\n");
     printf("\r\n");
 }
 
@@ -443,8 +450,12 @@ int main(int argc, char* argv[])
                             "lp -o media=A5 -o sides=two-sided-short-edge -o ColorModel=Color -o orientation-requested=4 -o fit-to-page %s",
                             SYSTEM_CFG.Output.chCombinedFileName);
             }
-
-            run_os_command(s_chCommandLine);
+            if (SYSTEM_CFG.Input.bDryRun) {
+                printf("\r\n\r\n It is dry-run mode. Please use the following command line to print: \r\n %s\r\n", s_chCommandLine);
+            } else {
+                run_os_command(s_chCommandLine);
+            }
+            
         } while(0);
 
         /* delete temporary files*/
@@ -465,13 +476,15 @@ int main(int argc, char* argv[])
 
             run_os_command(s_chCommandLine);
 
-            memset(s_chCommandLine, 0, sizeof(s_chCommandLine));
-            snprintf(  s_chCommandLine, 
-                        dimof(s_chCommandLine), 
-                        "rm %s",
-                        SYSTEM_CFG.Output.chCombinedFileName);
+            if (!SYSTEM_CFG.Input.bDryRun) {
+                memset(s_chCommandLine, 0, sizeof(s_chCommandLine));
+                snprintf(  s_chCommandLine, 
+                            dimof(s_chCommandLine), 
+                            "rm %s",
+                            SYSTEM_CFG.Output.chCombinedFileName);
 
-            run_os_command(s_chCommandLine);
+                run_os_command(s_chCommandLine);
+            }
         } while(0);
 
     } while(0);

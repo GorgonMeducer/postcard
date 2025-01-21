@@ -86,6 +86,7 @@ typedef struct system_cfg_t {
         char *pchStoryPath;
         bool bUseA4;
         bool bValid;
+        bool bDryRun;
     } Input;
 
     struct {

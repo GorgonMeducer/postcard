@@ -8,10 +8,11 @@
             "program": "${workspaceFolder}/build/postcard",
             "args": [
                 "-p", 
-                "test/monika.bmp", 
+                "test/photo.bmp", 
                 "-t", 
                 "test/story.txt",
-                "--A4"
+                "--A4",
+                "--dryrun",
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
