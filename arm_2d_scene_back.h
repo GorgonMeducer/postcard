@@ -85,7 +85,7 @@ ARM_PRIVATE(
     /* place your private member here, following two are examples */
     int64_t lTimestamp[1];
     bool bUserAllocated;
-
+    bool bFinishedDrawing;
 )
     /* place your public member here */
     

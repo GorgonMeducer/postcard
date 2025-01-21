@@ -22,6 +22,7 @@
 #include "arm_2d_scene_front.h"
 
 #include "arm_2d_scene_back.h"
+#include "Virtual_TFT_Port.h"
 
 #if defined(RTE_Acceleration_Arm_2D_Helper_PFB)
 
@@ -97,6 +98,12 @@ typedef struct system_cfg_t {
         arm_2d_tile_t tTile;
         arm_2d_tile_t tMaskTile;
     } Picture;
+
+    struct {
+        char chFrontFileName[64];
+        char chBackFileName[64];
+        char chCombinedFileName[64];
+    } Output;
 } system_cfg_t;
 
 /*============================ GLOBAL VARIABLES ==============================*/
@@ -173,8 +180,14 @@ static void __on_scene_front_frame_complete(arm_2d_scene_t *ptScene)
     user_scene_front_t *ptThis = (user_scene_front_t *)ptScene;
     ARM_2D_UNUSED(ptThis);
 
-    arm_2d_scene_player_switch_to_next_scene(
-                            this.use_as__arm_2d_scene_t.ptPlayer);
+    if (!this.bFinishedDrawing) {
+        this.bFinishedDrawing = true;
+    } else {
+        VT_save_screenshot(SYSTEM_CFG.Output.chFrontFileName);
+
+        arm_2d_scene_player_switch_to_next_scene(
+                                this.use_as__arm_2d_scene_t.ptPlayer);
+    }
 }
 
 static void __before_scene_front_switching_out(arm_2d_scene_t *ptScene)

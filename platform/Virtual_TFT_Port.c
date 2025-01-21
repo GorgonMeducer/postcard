@@ -91,18 +91,35 @@ bool VT_mouse_get_location(arm_2d_location_t *ptLocation)
     return left_button_is_down;
 }
 
-#if 0
-int quit_filter(void * userdata, SDL_Event * event)
+bool VT_save_screenshot(const char *filename) 
 {
-    (void)userdata;
+    int width, height;
+    SDL_GetRendererOutputSize(renderer, &width, &height);
 
-    if(event->type == SDL_QUIT) {
-        sdl_quit_qry = true;
+    SDL_Surface *surface = SDL_CreateRGBSurfaceWithFormat(0, VT_WIDTH, VT_HEIGHT, 32, SDL_PIXELFORMAT_ARGB8888);
+    if (!surface) {
+        printf("Failed to create surface: %s\n", SDL_GetError());
+        return false;
     }
 
-    return 1;
-}
+    memcpy(surface->pixels, tft_fb, sizeof(tft_fb));
+
+#if 0
+    if (SDL_RenderReadPixels(renderer, NULL, surface->format->format, surface->pixels, surface->pitch) != 0) {
+        printf("Failed to read pixels from renderer: %s\n", SDL_GetError());
+        SDL_FreeSurface(surface);
+        return false;
+    }
 #endif
+
+    if (SDL_SaveBMP(surface, filename) != 0) {
+        printf("Failed to save BMP file: %s\n", SDL_GetError());
+    }
+
+    SDL_FreeSurface(surface);
+
+    return true;
+}
 
 typedef struct RecursiveMutex {
     SDL_mutex *mutex;
@@ -164,6 +181,11 @@ void VT_leave_global_mutex(void)
     RecursiveMutex_Unlock(s_ptGlobalMutex);
 }
 
+void VT_request_quit(void)
+{
+    sdl_quit_qry = true;
+    sdl_joined = false;
+}
 
 static void monitor_sdl_clean_up(void)
 {
@@ -224,7 +246,8 @@ static void monitor_sdl_init(void)
 
 bool VT_sdl_refresh_task(void)
 {
-    if (arm_2d_helper_is_time_out(1000/60)) {
+    //if (arm_2d_helper_is_time_out(1000/60)) 
+    {
 
     #if __DISP0_CFG_ENABLE_3FB_HELPER_SERVICE__
         void * pFrameBuffer = disp_adapter0_3fb_get_flush_pointer();
@@ -254,8 +277,7 @@ bool VT_sdl_refresh_task(void)
 
         switch((&event)->type) {
             case SDL_QUIT:
-                sdl_quit_qry = true;
-                sdl_joined = false;
+                VT_request_quit();
                 break;
             case SDL_MOUSEBUTTONUP:
                 if((&event)->button.button == SDL_BUTTON_LEFT)

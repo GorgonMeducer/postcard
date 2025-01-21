@@ -21,6 +21,8 @@
 #define __USER_SCENE_BACK_IMPLEMENT__
 #include "arm_2d_scene_back.h"
 
+#include "Virtual_TFT_Port.h"
+
 #if defined(RTE_Acceleration_Arm_2D_Helper_PFB)
 
 #include <stdlib.h>
@@ -95,6 +97,12 @@ typedef struct system_cfg_t {
         arm_2d_tile_t tTile;
         arm_2d_tile_t tMaskTile;
     } Picture;
+
+    struct {
+        char chFrontFileName[64];
+        char chBackFileName[64];
+        char chCombinedFileName[64];
+    } Output;
 } system_cfg_t;
 
 /*============================ GLOBAL VARIABLES ==============================*/
@@ -204,12 +212,13 @@ static void __on_scene_back_frame_complete(arm_2d_scene_t *ptScene)
     user_scene_back_t *ptThis = (user_scene_back_t *)ptScene;
     ARM_2D_UNUSED(ptThis);
 
-#if 0
-    /* switch to next scene after 3s */
-    if (arm_2d_helper_is_time_out(3000, &this.lTimestamp[0])) {
-        arm_2d_scene_player_switch_to_next_scene(ptScene->ptPlayer);
+    if (!this.bFinishedDrawing) {
+        this.bFinishedDrawing = true;
+    } else {
+        VT_save_screenshot(SYSTEM_CFG.Output.chBackFileName);
+
+        VT_request_quit();
     }
-#endif
 }
 
 static void __before_scene_back_switching_out(arm_2d_scene_t *ptScene)

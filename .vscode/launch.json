@@ -5,10 +5,10 @@
             "name": "build and run on macos (lldb)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/arm_2d",
+            "program": "${workspaceFolder}/build/postcard",
             "args": [
                 "-p", 
-                "test/photo.bmp", 
+                "test/monika.bmp", 
                 "-t", 
                 "test/story.txt",
                 "--A4"
@@ -24,7 +24,7 @@
             "name": "build and run x86(32)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/arm_2d.exe",
+            "program": "${workspaceFolder}/build/postcard.exe",
             "args": [
                 "-p", 
                 "test/photo.bmp",  
@@ -56,7 +56,7 @@
             "name": "build and run Linux",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/arm_2d",
+            "program": "${workspaceFolder}/build/postcard",
             "args": [
                 "-p", 
                 "test/photo.bmp", 

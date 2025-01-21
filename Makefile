@@ -3,8 +3,6 @@ CC_SRC  := $(wildcard *.c)
 CC_SRC  += $(wildcard platform/*.c)
 CC_SRC  += $(wildcard resources/*.c)
 CC_SRC  += $(wildcard platform/math/*.c)
-CC_SRC  += $(wildcard genshin_clock/*.c)
-CC_SRC  += $(wildcard genshin_clock/resources/*.c)
 CC_SRC  += $(wildcard Arm-2D/Library/Source/*.c)
 CC_SRC  += $(wildcard Arm-2D/Helper/Source/*.c)
 CC_SRC  += $(wildcard Arm-2D/examples/common/asset/*.c)
@@ -12,7 +10,6 @@ CC_SRC  += $(wildcard Arm-2D/examples/common/benchmark/*.c)
 CC_SRC  += $(wildcard Arm-2D/examples/common/controls/*.c)
 
 CC_INC  := .
-CC_INC  += genshin_clock
 CC_INC  += platform
 CC_INC  += platform/math
 CC_INC  += platform/math/dsp
@@ -31,7 +28,7 @@ ifeq ($(OS),Windows_NT)
 	CC      := $(CROSS)gcc
 	STRIP   := $(CROSS)strip
 	SIZE    := $(CROSS)size
-	OUT     := build/arm_2d.exe
+	OUT     := build/postcard.exe
 	RM      := cmd /c rd /s /q
 
 	CC_INC  += sdl2/32/include
@@ -47,7 +44,7 @@ else ifeq ($(shell uname), Darwin)
 	CC      := $(CROSS)gcc
 	STRIP   := $(CROSS)strip
 	SIZE    := $(CROSS)size
-	OUT     := build/arm_2d
+	OUT     := build/postcard
 	RM      := rm -rf
 	CCFLAG  += -DSDL_DISABLE_ARM_NEON_H -D_THREAD_SAFE
 	CC_INC  += /opt/homebrew/include
@@ -59,7 +56,7 @@ else
 	CC      := $(CROSS)gcc
 	STRIP   := $(CROSS)strip
 	SIZE    := $(CROSS)size
-	OUT     := build/arm_2d
+	OUT     := build/postcard
 	RM      := rm -rf
 	CCFLAG  += -w
 	LD_LIB  := SDL2
@@ -75,9 +72,9 @@ CCFLAG  +=  -ffunction-sections -fdata-sections
 CCFLAG  +=  -fno-ms-extensions
 CCFLAG  +=  -Wno-macro-redefined
 
-CCFLAG  += 	-O0
-#CCFLAG  +=  -flto
-#LDFLAG  +=  -flto
+CCFLAG  += 	-Ofast
+CCFLAG  +=  -flto
+LDFLAG  +=  -flto
 LDFLAG  +=  -lpthread
 
 #======================================================================================================================#

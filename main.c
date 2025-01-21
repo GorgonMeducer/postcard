@@ -68,11 +68,23 @@ typedef struct system_cfg_t {
         arm_2d_tile_t tTile;
         arm_2d_tile_t tMaskTile;
     } Picture;
+
+    struct {
+        char chFrontFileName[64];
+        char chBackFileName[64];
+        char chCombinedFileName[64];
+    } Output;
 } system_cfg_t;
 
 /*============================ GLOBAL VARIABLES ==============================*/
 
-system_cfg_t SYSTEM_CFG = {0};
+system_cfg_t SYSTEM_CFG = {
+    .Output = {
+        .chFrontFileName = {"front_XXXXXXXX"},
+        .chBackFileName = {"back_XXXXXXXX"},
+        .chCombinedFileName = {"combined_XXXXXXXX"},
+    },
+};
 
 /*============================ PROTOTYPES ====================================*/
 /*============================ LOCAL VARIABLES ===============================*/
@@ -359,7 +371,6 @@ int main(int argc, char* argv[])
         }
 
         /* load png */
-
         if (!load_picture(SYSTEM_CFG.Input.pchInputPicturePath,
                          &SYSTEM_CFG.Picture.tTile,
                          &SYSTEM_CFG.Picture.tMaskTile)) {
@@ -367,6 +378,34 @@ int main(int argc, char* argv[])
             ret = -1;
             break;
         };
+
+        /* initialize temp files */
+        do {
+            mktemp(SYSTEM_CFG.Output.chFrontFileName);
+            int32_t nStringLength = strlen(SYSTEM_CFG.Output.chFrontFileName);
+            SYSTEM_CFG.Output.chFrontFileName[nStringLength++] = '.';
+            SYSTEM_CFG.Output.chFrontFileName[nStringLength++] = 'b';
+            SYSTEM_CFG.Output.chFrontFileName[nStringLength++] = 'm';
+            SYSTEM_CFG.Output.chFrontFileName[nStringLength++] = 'p';
+            SYSTEM_CFG.Output.chFrontFileName[nStringLength++] = '\0';
+            
+            mktemp(SYSTEM_CFG.Output.chBackFileName);
+            nStringLength = strlen(SYSTEM_CFG.Output.chBackFileName);
+            SYSTEM_CFG.Output.chBackFileName[nStringLength++] = '.';
+            SYSTEM_CFG.Output.chBackFileName[nStringLength++] = 'b';
+            SYSTEM_CFG.Output.chBackFileName[nStringLength++] = 'm';
+            SYSTEM_CFG.Output.chBackFileName[nStringLength++] = 'p';
+            SYSTEM_CFG.Output.chBackFileName[nStringLength++] = '\0';
+
+            mktemp(SYSTEM_CFG.Output.chCombinedFileName);
+            nStringLength = strlen(SYSTEM_CFG.Output.chCombinedFileName);
+            SYSTEM_CFG.Output.chCombinedFileName[nStringLength++] = '.';
+            SYSTEM_CFG.Output.chCombinedFileName[nStringLength++] = 'p';
+            SYSTEM_CFG.Output.chCombinedFileName[nStringLength++] = 'd';
+            SYSTEM_CFG.Output.chCombinedFileName[nStringLength++] = 'f';
+            SYSTEM_CFG.Output.chCombinedFileName[nStringLength++] = '\0';
+        } while(0);
+
 
         /* start arm-2d task */
 
@@ -376,6 +415,64 @@ int main(int argc, char* argv[])
                 break;
             }
         }
+
+        /* generate PDF */
+        do {
+            static char s_chCommandLine[256] = {0};
+            snprintf(  s_chCommandLine, 
+                        dimof(s_chCommandLine), 
+                        "magick %s %s %s",
+                        SYSTEM_CFG.Output.chFrontFileName,
+                        SYSTEM_CFG.Output.chBackFileName,
+                        SYSTEM_CFG.Output.chCombinedFileName);
+
+            run_os_command(s_chCommandLine);
+        } while(0);
+
+        /* printf PDF */
+        do {
+            static char s_chCommandLine[256] = {0};
+            if (SYSTEM_CFG.Input.bUseA4) {
+                snprintf(  s_chCommandLine, 
+                            dimof(s_chCommandLine), 
+                            "lp -o media=A4 -o sides=two-sided-short-edge -o ColorModel=Color -o orientation-requested=4 -o fit-to-page %s",
+                            SYSTEM_CFG.Output.chCombinedFileName);
+            } else {
+                snprintf(  s_chCommandLine, 
+                            dimof(s_chCommandLine), 
+                            "lp -o media=A5 -o sides=two-sided-short-edge -o ColorModel=Color -o orientation-requested=4 -o fit-to-page %s",
+                            SYSTEM_CFG.Output.chCombinedFileName);
+            }
+
+            run_os_command(s_chCommandLine);
+        } while(0);
+
+        /* delete temporary files*/
+        do {
+            static char s_chCommandLine[256] = {0};
+            snprintf(  s_chCommandLine, 
+                        dimof(s_chCommandLine), 
+                        "rm %s",
+                        SYSTEM_CFG.Output.chFrontFileName);
+
+            run_os_command(s_chCommandLine);
+
+            memset(s_chCommandLine, 0, sizeof(s_chCommandLine));
+            snprintf(  s_chCommandLine, 
+                        dimof(s_chCommandLine), 
+                        "rm %s",
+                        SYSTEM_CFG.Output.chBackFileName);
+
+            run_os_command(s_chCommandLine);
+
+            memset(s_chCommandLine, 0, sizeof(s_chCommandLine));
+            snprintf(  s_chCommandLine, 
+                        dimof(s_chCommandLine), 
+                        "rm %s",
+                        SYSTEM_CFG.Output.chCombinedFileName);
+
+            run_os_command(s_chCommandLine);
+        } while(0);
 
     } while(0);
 
