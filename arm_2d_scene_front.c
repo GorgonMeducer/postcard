@@ -101,11 +101,6 @@ typedef struct system_cfg_t {
 
 /*============================ GLOBAL VARIABLES ==============================*/
 
-extern const arm_2d_tile_t c_tileCMSISLogo;
-extern const arm_2d_tile_t c_tileCMSISLogoMask;
-extern const arm_2d_tile_t c_tileCMSISLogoA2Mask;
-extern const arm_2d_tile_t c_tileCMSISLogoA4Mask;
-
 extern system_cfg_t SYSTEM_CFG;
 extern const arm_2d_tile_t c_tileMonikaCCCA8888;
 extern const arm_2d_tile_t c_tileEWLogoCCCA8888;

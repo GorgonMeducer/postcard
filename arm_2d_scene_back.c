@@ -78,39 +78,69 @@
 #define this (*ptThis)
 
 /*============================ TYPES =========================================*/
+typedef struct system_cfg_t {
+    struct {
+        char *pchInputPicturePath;
+        char *pchStoryPath;
+        bool bUseA4;
+        bool bValid;
+    } Input;
+
+    struct {
+        char *pchStory;
+        size_t tSize;
+    } Story;
+
+    struct {
+        arm_2d_tile_t tTile;
+        arm_2d_tile_t tMaskTile;
+    } Picture;
+} system_cfg_t;
+
 /*============================ GLOBAL VARIABLES ==============================*/
 
-extern const arm_2d_tile_t c_tileCMSISLogo;
-extern const arm_2d_tile_t c_tileCMSISLogoMask;
-extern const arm_2d_tile_t c_tileCMSISLogoA2Mask;
-extern const arm_2d_tile_t c_tileCMSISLogoA4Mask;
+extern system_cfg_t SYSTEM_CFG;
+
+extern 
+const arm_2d_tile_t c_tileOnArmLogoCCCA8888;
+
+extern
+const
+struct {
+    implement(arm_2d_user_font_t);
+    arm_2d_char_idx_t tUTF8Table;
+} ARM_2D_FONT_IBMPlexMono46_A8;
+
+extern
+const
+struct {
+    implement(arm_2d_user_font_t);
+    arm_2d_char_idx_t tUTF8Table;
+} ARM_2D_FONT_Calibri46_A8;
+
+extern
+const
+struct {
+    implement(arm_2d_user_font_t);
+    arm_2d_char_idx_t tUTF8Table;
+} ARM_2D_FONT_Lato64_A8;
+
+extern
+const
+struct {
+    implement(arm_2d_user_font_t);
+    arm_2d_char_idx_t tUTF8Table;
+} ARM_2D_FONT_CalibriBold46_A8;
+
+extern
+const
+struct {
+    implement(arm_2d_user_font_t);
+    arm_2d_char_idx_t tUTF8Table;
+} ARM_2D_FONT_BradleyHand64_A8;
+
 /*============================ PROTOTYPES ====================================*/
 /*============================ LOCAL VARIABLES ===============================*/
-
-/*! define dirty regions */
-IMPL_ARM_2D_REGION_LIST(s_tDirtyRegions, static)
-
-    /* a dirty region to be specified at runtime*/
-    ADD_REGION_TO_LIST(s_tDirtyRegions,
-        0  /* initialize at runtime later */
-    ),
-    
-    /* add the last region:
-        * it is the top left corner for text display 
-        */
-    ADD_LAST_REGION_TO_LIST(s_tDirtyRegions,
-        .tLocation = {
-            .iX = 0,
-            .iY = 0,
-        },
-        .tSize = {
-            .iWidth = 0,
-            .iHeight = 8,
-        },
-    ),
-
-END_IMPL_ARM_2D_REGION_LIST(s_tDirtyRegions)
-
 /*============================ IMPLEMENTATION ================================*/
 
 static void __on_scene_back_load(arm_2d_scene_t *ptScene)
@@ -202,62 +232,115 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_back_handler)
     ARM_2D_UNUSED(tScreenSize);
 
     arm_2d_canvas(ptTile, __top_canvas) {
-    /*-----------------------draw the foreground begin-----------------------*/
-        
-        /* following code is just a demo, you can remove them */
 
-        arm_2d_align_centre(__top_canvas, 200, 100 ) {
-            draw_round_corner_box(  ptTile, 
-                                    &__centre_region, 
-                                    GLCD_COLOR_WHITE, 
-                                    255,
-                                    bIsNewFrame);
-            
-            ARM_2D_OP_WAIT_ASYNC();
-            
-            draw_round_corner_border(   ptTile, 
-                                        &__centre_region, 
-                                        GLCD_COLOR_BLACK, 
-                                        (arm_2d_border_opacity_t)
-                                            {32, 32, 255-64, 255-64},
-                                        (arm_2d_corner_opacity_t)
-                                            {0, 128, 128, 128});
-                                    
+        arm_2d_dock(__top_canvas, 200, 200, 100, 100) {
+
+            //arm_2d_draw_box(ptTile, &__dock_region, 4, GLCD_COLOR_BLACK, 32);
+
+            arm_2d_layout(__dock_region) {
+                
+                __item_line_dock_vertical(46) {
+                    arm_lcd_text_set_target_framebuffer(ptTile);
+                    
+                    arm_lcd_text_set_draw_region(&__item_region);
+                    arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
+                    arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_CalibriBold46_A8);
+                    //arm_lcd_text_set_scale(1.1f);
+                    arm_lcd_printf_label(ARM_2D_ALIGN_MIDDLE_LEFT, "March 2025, NürnbergMesse GmbH");
+                    //arm_lcd_text_set_scale(1.0f);
+                }
+
+                __item_line_dock_vertical() {
+
+                    arm_2d_layout(__item_region, BOTTOM_UP) {
+
+                        /* draw footnote */
+                        __item_line_dock_vertical(c_tileOnArmLogoCCCA8888.tRegion.tSize.iHeight) {
+
+                            arm_lcd_text_set_target_framebuffer(ptTile);
+                            arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_Lato64_A8);
+                            arm_lcd_text_set_scale(1.2f);
+                            arm_2d_size_t tStringSize = 
+                                arm_lcd_get_string_line_box(
+                                                        "The Fugure is Built ", 
+                                                        &ARM_2D_FONT_Lato64_A8);
+
+                            arm_2d_dock_horizontal( __item_region, 
+                                                        c_tileOnArmLogoCCCA8888.tRegion.tSize.iWidth 
+                                                    +   tStringSize.iWidth) {
+
+                                /* draw string */
+                                arm_2d_align_mid_left(__horizontal_region, tStringSize) {
+                                    //
+
+                                    arm_lcd_text_set_draw_region(&__mid_left_region);
+                                    arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
+                                    arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_Lato64_A8);
+                                    arm_lcd_printf_label(ARM_2D_ALIGN_MIDDLE_LEFT, "The Future is Built");
+
+                                    arm_lcd_text_set_scale(1.0f);
+                                }
+
+                                /* draw OnArm logo */
+                                arm_2d_align_mid_right(__horizontal_region, c_tileOnArmLogoCCCA8888.tRegion.tSize) {
+
+                                    arm_2d_tile_copy_to_cccn888(&c_tileOnArmLogoCCCA8888,
+                                                                ptTile,
+                                                                &__mid_right_region);
+
+                                }
+                            }
+
+                        }
+
+                        /* draw explanations */
+                        __item_line_dock_vertical(250) {
+                            //arm_2d_draw_box(ptTile, &__item_region, 4, GLCD_COLOR_BLACK, 32);
+
+                            arm_lcd_text_set_draw_region(&__item_region);
+                            arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_Calibri46_A8);
+                            arm_lcd_text_set_scale(1.30f);
+                            arm_lcd_printf("The above story was generated based on the image on the reverse of this card. AI models running solely on a ");
+                            arm_lcd_text_set_colour(GLCD_COLOR_RED, GLCD_COLOR_WHITE);
+                            arm_lcd_printf("Raspberry Pi ");
+                            arm_lcd_text_set_colour(__RGB(32, 200, 32), GLCD_COLOR_WHITE);
+                            arm_lcd_printf("5 ");
+                            arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
+                            arm_lcd_printf("were used to detect objects in the camera view and develop a narrative, utilizing ");
+                            arm_lcd_text_set_colour(__RGB(00, 0x8f, 0xbe), GLCD_COLOR_WHITE);
+                            arm_lcd_printf("Arm Technologies.");
+                            arm_lcd_text_set_scale(1.00f);
+                        }
+
+                        /* draw story */
+                        __item_line_dock_vertical(0, 0, 50, 50) {
+                            
+                            arm_2d_fill_colour_with_vertical_alpha_gradient_and_opacity(ptTile, 
+                                                                                        &__item_region, 
+                                                                                        (__arm_2d_color_t){__RGB(00, 0x8f, 0xbe)}, 
+                                                                                        128, 
+                                                                                        (arm_2d_alpha_samples_2pts_t){
+                                                                                            {128, 0}
+                                                                                        });
+
+                            arm_2d_dock(__item_region, 50) {
+                                arm_lcd_text_set_draw_region(&__dock_region);
+                                arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_BradleyHand64_A8);
+                                arm_lcd_text_set_scale(0.80f);
+                                arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
+                                arm_lcd_printf("%s", SYSTEM_CFG.Story.pchStory);
+                                arm_lcd_text_set_scale(1.00f);
+                            }
+                        }
+
+                    }
+
+                }
+            }
+
         }
-
-
-    #if 0
-        /* draw the cmsis logo in the centre of the screen */
-        arm_2d_align_centre(__top_canvas, c_tileCMSISLogo.tRegion.tSize) {
-            arm_2d_tile_copy_with_src_mask( &c_tileCMSISLogo,
-                                            &c_tileCMSISLogoMask,
-                                            ptTile,
-                                            &__centre_region,
-                                            ARM_2D_CP_MODE_COPY);
-        }
-    #else
-        /* draw the cmsis logo using mask in the centre of the screen */
-        arm_2d_align_centre(__top_canvas, c_tileCMSISLogo.tRegion.tSize) {
-            arm_2d_fill_colour_with_a4_mask_and_opacity(   
-                                                ptTile, 
-                                                &__centre_region, 
-                                                &c_tileCMSISLogoA4Mask, 
-                                                (__arm_2d_color_t){GLCD_COLOR_BLACK},
-                                                128);
-        }
-    #endif
-
-        /* draw text at the top-left corner */
-
-        arm_lcd_text_set_target_framebuffer((arm_2d_tile_t *)ptTile);
-        arm_lcd_text_set_font(&ARM_2D_FONT_6x8.use_as__arm_2d_font_t);
-        arm_lcd_text_set_draw_region(NULL);
-        arm_lcd_text_set_colour(GLCD_COLOR_RED, GLCD_COLOR_WHITE);
-        arm_lcd_text_location(0,0);
-        arm_lcd_puts("Scene back");
-
-    /*-----------------------draw the foreground end  -----------------------*/
     }
+
     ARM_2D_OP_WAIT_ASYNC();
 
     return arm_fsm_rt_cpl;
@@ -269,24 +352,6 @@ user_scene_back_t *__arm_2d_scene_back_init(   arm_2d_scene_player_t *ptDispAdap
 {
     bool bUserAllocated = false;
     assert(NULL != ptDispAdapter);
-
-    s_tDirtyRegions[dimof(s_tDirtyRegions)-1].ptNext = NULL;
-
-    /* get the screen region */
-    arm_2d_region_t tScreen
-        = arm_2d_helper_pfb_get_display_area(
-            &ptDispAdapter->use_as__arm_2d_helper_pfb_t);
-    
-    /* initialise dirty region 0 at runtime
-     * this demo shows that we create a region in the centre of a screen(320*240)
-     * for a image stored in the tile c_tileCMSISLogoMask
-     */
-    arm_2d_align_centre(tScreen, c_tileCMSISLogoMask.tRegion.tSize) {
-        s_tDirtyRegions[0].tRegion = __centre_region;
-    }
-
-    s_tDirtyRegions[dimof(s_tDirtyRegions)-1].tRegion.tSize.iWidth 
-                                                        = tScreen.tSize.iWidth;
 
     if (NULL == ptThis) {
         ptThis = (user_scene_back_t *)

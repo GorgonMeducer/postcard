@@ -187,7 +187,7 @@ extern "C" {
 // <o> The size of the LCD printf text buffer <16-65535>
 // <i> The text buffer size for the lcd printf service. It determins how many character you can use in one printf string.
 #ifndef __LCD_PRINTF_CFG_TEXT_BUFFER_SIZE__
-#   define __LCD_PRINTF_CFG_TEXT_BUFFER_SIZE__                          80
+#   define __LCD_PRINTF_CFG_TEXT_BUFFER_SIZE__                          4096
 #endif
 
 // <h>Benchmark
