@@ -11,7 +11,7 @@
                 "test/photo.bmp", 
                 "-t", 
                 "test/story.txt"
-                //,"--dryrun",
+                ,"--dryrun",
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
