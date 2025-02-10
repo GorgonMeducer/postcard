@@ -114,6 +114,8 @@ extern const arm_2d_tile_t c_tileMonikaCCCA8888;
 extern const arm_2d_tile_t c_tileEWLogoCCCA8888;
 extern const arm_2d_tile_t c_tileArmLogoCCCA8888;
 
+extern const arm_2d_tile_t c_tileArmLogoMask;
+
 /*============================ PROTOTYPES ====================================*/
 /*============================ LOCAL VARIABLES ===============================*/
 /*============================ IMPLEMENTATION ================================*/
@@ -213,67 +215,82 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_front_handler)
 
     arm_2d_canvas(ptTile, __top_canvas) {
     /*-----------------------draw the foreground begin-----------------------*/
-        arm_2d_dock(__top_canvas, 100 ) {
+        arm_2d_dock(__top_canvas, 150, 150, 75, 75 ) {
 
-            arm_2d_layout(__dock_region) {
-                
-                __item_line_dock_vertical(c_tileArmLogoCCCA8888.tRegion.tSize.iHeight,
-                                          (__dock_region.tSize.iWidth - 2000) / 2,
-                                          (__dock_region.tSize.iWidth - 2000) / 2,
-                                          0, 0) {
-                    arm_2d_dock_left(__item_region, c_tileArmLogoCCCA8888.tRegion.tSize.iWidth) {
-                        arm_2d_tile_copy_to_cccn888(&c_tileArmLogoCCCA8888,
-                                                    ptTile,
-                                                    &__left_region);
+            //arm_2d_draw_box(ptTile, &__dock_region, 10, GLCD_COLOR_RED, 128);
 
-                    }
-                }
+            arm_2d_layout(__dock_region, BOTTOM_UP) {
+            
+                __item_line_dock_vertical(c_tileEWLogoCCCA8888.tRegion.tSize.iHeight) {
+                    //arm_2d_draw_box(ptTile, &__item_region, 10, GLCD_COLOR_GREEN, 128);
 
-                __item_line_dock_vertical() {
+                    arm_2d_layout(__item_region) {
 
-                    arm_2d_layout(__item_region, BOTTOM_UP) {
+                        __item_line_dock_horizontal(c_tileArmLogoCCCA8888.tRegion.tSize.iWidth) {
 
-                        __item_line_dock_vertical(  c_tileEWLogoCCCA8888.tRegion.tSize.iHeight,
-                                                    (__dock_region.tSize.iWidth - 2000) / 2,
-                                                    (__dock_region.tSize.iWidth - 2000) / 2,
-                                                    0, 0) {
-                            arm_2d_dock_right(__item_region, c_tileEWLogoCCCA8888.tRegion.tSize.iWidth) {
-                                arm_2d_tile_copy_to_cccn888(&c_tileEWLogoCCCA8888,
-                                                            ptTile,
-                                                            &__right_region);
-
+                            arm_2d_align_mid_left(__item_region, c_tileArmLogoCCCA8888.tRegion.tSize) {
+                                arm_2d_fill_colour_with_mask_and_opacity(   ptTile,
+                                                                            &__mid_left_region,
+                                                                            &c_tileArmLogoMask,
+                                                                            (__arm_2d_color_t) {GLCD_COLOR_BLACK},
+                                                                            255-32);
                             }
                         }
 
-                        __item_line_dock_vertical(  (__dock_region.tSize.iWidth - 2000) / 2,
-                                                    (__dock_region.tSize.iWidth - 2000) / 2,
-                                                    20, 20) {
+                        /* padding and seperator line */
+                        __item_line_dock_horizontal(100) {
+                        
+                            arm_2d_dock_horizontal(__item_region, 4) {
 
-                            //arm_2d_draw_box(ptTile, &__item_region, 4, GLCD_COLOR_BLACK, 32);
+                                arm_2d_fill_colour_with_opacity(ptTile, 
+                                                                &__horizontal_region, 
+                                                                (__arm_2d_color_t) {GLCD_COLOR_BLACK},
+                                                                255-32);
 
-                            arm_2d_location_t tImageCentre = {
-                                .iX = SYSTEM_CFG.Picture.tTile.tRegion.tSize.iWidth / 2,
-                                .iY = SYSTEM_CFG.Picture.tTile.tRegion.tSize.iHeight / 2,
-                            };
+                            }
 
-                            float fScaleW = (float)__item_region.tSize.iWidth / (float)SYSTEM_CFG.Picture.tTile.tRegion.tSize.iWidth;
-                            float fScaleH = (float)__item_region.tSize.iHeight / (float)SYSTEM_CFG.Picture.tTile.tRegion.tSize.iHeight;
-                            float fScale = MIN(fScaleW, fScaleH);
-
-                            arm_2dp_tile_transform_with_src_mask_and_opacity(
-                                &this.tTransOP,
-                                &SYSTEM_CFG.Picture.tTile,
-                                &SYSTEM_CFG.Picture.tMaskTile,
-                                ptTile,
-                                &__item_region,
-                                tImageCentre,
-                                0.0f,
-                                fScale,
-                                255);
                         }
+
+                        __item_line_dock_horizontal() {
+                            arm_2d_align_mid_left(__item_region, c_tileEWLogoCCCA8888.tRegion.tSize) {
+                                arm_2d_tile_copy_to_cccn888(&c_tileEWLogoCCCA8888,
+                                                            ptTile,
+                                                            &__mid_left_region);
+                            }
+                        }
+
                     }
                 }
+                
+                /* padding */
+                __item_line_dock_vertical(50) {
+
+                }
+
+                /* photo */
+                __item_line_dock_vertical() {
+                    arm_2d_location_t tImageCentre = {
+                        .iX = SYSTEM_CFG.Picture.tTile.tRegion.tSize.iWidth / 2,
+                        .iY = SYSTEM_CFG.Picture.tTile.tRegion.tSize.iHeight / 2,
+                    };
+
+                    float fScaleW = (float)__item_region.tSize.iWidth / (float)SYSTEM_CFG.Picture.tTile.tRegion.tSize.iWidth;
+                    float fScaleH = (float)__item_region.tSize.iHeight / (float)SYSTEM_CFG.Picture.tTile.tRegion.tSize.iHeight;
+                    float fScale = MIN(fScaleW, fScaleH);
+
+                    arm_2dp_tile_transform_with_src_mask_and_opacity(
+                        &this.tTransOP,
+                        &SYSTEM_CFG.Picture.tTile,
+                        &SYSTEM_CFG.Picture.tMaskTile,
+                        ptTile,
+                        &__item_region,
+                        tImageCentre,
+                        0.0f,
+                        fScale,
+                        255);
+                }
             }
+
         }
 
     /*-----------------------draw the foreground end  -----------------------*/
