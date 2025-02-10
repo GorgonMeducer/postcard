@@ -128,7 +128,7 @@ const
 struct {
     implement(arm_2d_user_font_t);
     arm_2d_char_idx_t tUTF8Table;
-} ARM_2D_FONT_Calibri46_A8;
+} ARM_2D_FONT_Calibri_A8;
 
 extern
 const
@@ -313,8 +313,8 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_back_handler)
                                 //arm_2d_draw_box(ptTile, &__item_region, 4, GLCD_COLOR_BLACK, 32);
 
                                 arm_lcd_text_set_draw_region(&__left_region);
-                                arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_Calibri46_A8);
-                                arm_lcd_text_set_scale(0.77f);
+                                arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_Calibri_A8);
+                                //arm_lcd_text_set_scale(0.77f);
                                 arm_lcd_printf("The above story was generated based on the image on the reverse of");
                                 arm_lcd_printf("this card. AI models running solely on a Raspberry Pi 5 ");
                                 arm_lcd_printf("were used to detect objects in the camera view and develop a narrative, utilizing\n");
