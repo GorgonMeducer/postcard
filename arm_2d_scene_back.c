@@ -269,10 +269,10 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_back_handler)
                         __item_line_dock_vertical(250) {
 
                             arm_lcd_text_set_target_framebuffer(ptTile);
-                            arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_Lato64_A8);
+
                             arm_lcd_text_set_scale(1.05f);
                             arm_2d_size_t tStringSize = 
-                                arm_lcd_printf_to_buffer(&ARM_2D_FONT_Lato64_A8,
+                                arm_lcd_printf_to_buffer((arm_2d_font_t *)&ARM_2D_FONT_Lato64_A8,
                                                         "The Future of AI is Built ");
 
                             arm_2d_dock_right( __item_region, 
