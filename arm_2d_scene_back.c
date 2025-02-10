@@ -113,6 +113,9 @@ extern system_cfg_t SYSTEM_CFG;
 extern 
 const arm_2d_tile_t c_tileOnArmLogoCCCA8888;
 
+extern 
+const arm_2d_tile_t c_tileOnArmLogoMask;
+
 extern
 const
 struct {
@@ -243,7 +246,7 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_back_handler)
 
     arm_2d_canvas(ptTile, __top_canvas) {
 
-        arm_2d_dock(__top_canvas, 200, 200, 100, 100) {
+        arm_2d_dock(__top_canvas, 100, 100, 100, 50) {
 
             //arm_2d_draw_box(ptTile, &__dock_region, 4, GLCD_COLOR_BLACK, 32);
 
@@ -265,61 +268,70 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_back_handler)
                     arm_2d_layout(__item_region, BOTTOM_UP) {
 
                         /* draw footnote */
-                        __item_line_dock_vertical(c_tileOnArmLogoCCCA8888.tRegion.tSize.iHeight) {
+                        __item_line_dock_vertical(250) {
 
                             arm_lcd_text_set_target_framebuffer(ptTile);
                             arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_Lato64_A8);
-                            arm_lcd_text_set_scale(1.2f);
+                            arm_lcd_text_set_scale(1.05f);
                             arm_2d_size_t tStringSize = 
                                 arm_lcd_get_string_line_box(
-                                                        "The Fugure is Built ", 
+                                                        "The Future of AI is Built ", 
                                                         &ARM_2D_FONT_Lato64_A8);
 
-                            arm_2d_dock_horizontal( __item_region, 
-                                                        c_tileOnArmLogoCCCA8888.tRegion.tSize.iWidth 
+                            arm_2d_dock_right( __item_region, 
+                                                        c_tileOnArmLogoMask.tRegion.tSize.iWidth 
                                                     +   tStringSize.iWidth) {
 
                                 /* draw string */
-                                arm_2d_align_mid_left(__horizontal_region, tStringSize) {
-                                    //
+                                arm_2d_align_mid_left(__right_region, tStringSize) {
+
+                                    __mid_left_region.tLocation.iY -= 10;
 
                                     arm_lcd_text_set_draw_region(&__mid_left_region);
                                     arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
                                     arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_Lato64_A8);
-                                    arm_lcd_printf_label(ARM_2D_ALIGN_MIDDLE_LEFT, "The Future is Built");
+                                    arm_lcd_printf_label(ARM_2D_ALIGN_MIDDLE_LEFT, "The Future of AI is Built ");
 
                                     arm_lcd_text_set_scale(1.0f);
                                 }
 
                                 /* draw OnArm logo */
-                                arm_2d_align_mid_right(__horizontal_region, c_tileOnArmLogoCCCA8888.tRegion.tSize) {
+                                arm_2d_align_mid_right(__right_region, c_tileOnArmLogoMask.tRegion.tSize) {
 
-                                    arm_2d_tile_copy_to_cccn888(&c_tileOnArmLogoCCCA8888,
-                                                                ptTile,
-                                                                &__mid_right_region);
+                                    arm_2d_fill_colour_with_mask_and_opacity(
+                                        ptTile,
+                                        &__mid_right_region,
+                                        &c_tileOnArmLogoMask,
+                                        (__arm_2d_color_t) {GLCD_COLOR_BLACK},
+                                        255 - 32);
 
                                 }
                             }
 
-                        }
+                            arm_2d_dock_left( __item_region, (__item_region.tSize.iWidth / 2) - 100) {
 
-                        /* draw explanations */
-                        __item_line_dock_vertical(250) {
-                            //arm_2d_draw_box(ptTile, &__item_region, 4, GLCD_COLOR_BLACK, 32);
+                                //arm_2d_draw_box(ptTile, &__item_region, 4, GLCD_COLOR_BLACK, 32);
 
-                            arm_lcd_text_set_draw_region(&__item_region);
-                            arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_Calibri46_A8);
-                            arm_lcd_text_set_scale(1.30f);
-                            arm_lcd_printf("The above story was generated based on the image on the reverse of this card. AI models running solely on a ");
-                            arm_lcd_text_set_colour(GLCD_COLOR_RED, GLCD_COLOR_WHITE);
-                            arm_lcd_printf("Raspberry Pi ");
-                            arm_lcd_text_set_colour(__RGB(32, 200, 32), GLCD_COLOR_WHITE);
-                            arm_lcd_printf("5 ");
-                            arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
-                            arm_lcd_printf("were used to detect objects in the camera view and develop a narrative, utilizing ");
-                            arm_lcd_text_set_colour(__RGB(00, 0x8f, 0xbe), GLCD_COLOR_WHITE);
-                            arm_lcd_printf("Arm Technologies.");
-                            arm_lcd_text_set_scale(1.00f);
+                                arm_lcd_text_set_draw_region(&__left_region);
+                                arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_Calibri46_A8);
+                                arm_lcd_text_set_scale(0.77f);
+                                arm_lcd_printf("The above story was generated based on the image on the reverse of");
+                                arm_lcd_printf("this card. AI models running solely on a Raspberry Pi 5 ");
+                                arm_lcd_printf("were used to detect objects in the camera view and develop a narrative, utilizing\n");
+                                arm_lcd_printf("Arm Technologies. \n\n");
+
+                                arm_lcd_printf("This content was generated by artificial intelligence. It may contain\n");
+                                arm_lcd_printf("errors or inaccuracies.");
+                                arm_lcd_text_set_scale(1.00f);
+                            }
+
+                            arm_2d_dock_horizontal(__item_region, 4) {
+
+                                arm_2d_fill_colour_with_opacity(ptTile, 
+                                                                &__horizontal_region, 
+                                                                (__arm_2d_color_t) {GLCD_COLOR_BLACK},
+                                                                255-32);
+                            }
                         }
 
                         /* draw story */
@@ -336,7 +348,7 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_back_handler)
                             arm_2d_dock(__item_region, 50) {
                                 arm_lcd_text_set_draw_region(&__dock_region);
                                 arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_BradleyHand64_A8);
-                                arm_lcd_text_set_scale(0.80f);
+                                arm_lcd_text_set_scale(0.70f);
                                 arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
                                 arm_lcd_printf("%s", SYSTEM_CFG.Story.pchStory);
                                 arm_lcd_text_set_scale(1.00f);
