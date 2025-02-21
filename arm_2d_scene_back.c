@@ -451,7 +451,7 @@ user_scene_back_t *__arm_2d_scene_back_init(   arm_2d_scene_player_t *ptDispAdap
                 .pTarget    = (uintptr_t)&this.tCStringReader,
             },
             .tLineAlign = TEXT_BOX_LINE_ALIGN_JUSTIFIED,
-            //.fScale = 1.1f,
+            //.fScale = 1.0f,
 
             .ptScene = (arm_2d_scene_t *)ptThis,
         };
