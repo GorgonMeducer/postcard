@@ -87,6 +87,7 @@ typedef struct system_cfg_t {
         bool bUseA4;
         bool bValid;
         bool bDryRun;
+        bool bNoBackgroundColour;
     } Input;
 
     struct {
@@ -344,14 +345,16 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_back_handler)
 
                         /* draw story */
                         __item_line_dock_vertical(0, 0, 50, 50) {
-                            
-                            arm_2d_fill_colour_with_vertical_alpha_gradient_and_opacity(ptTile, 
-                                                                                        &__item_region, 
-                                                                                        (__arm_2d_color_t){__RGB(00, 0x8f, 0xbe)}, 
-                                                                                        128, 
-                                                                                        (arm_2d_alpha_samples_2pts_t){
-                                                                                            {128, 0}
-                                                                                        });
+                        
+                            if (!SYSTEM_CFG.Input.bNoBackgroundColour) {
+                                arm_2d_fill_colour_with_vertical_alpha_gradient_and_opacity(ptTile, 
+                                                                                            &__item_region, 
+                                                                                            (__arm_2d_color_t){__RGB(00, 0x8f, 0xbe)}, 
+                                                                                            128, 
+                                                                                            (arm_2d_alpha_samples_2pts_t){
+                                                                                                {128, 0}
+                                                                                            });
+                            }
 
                             arm_2d_dock(__item_region, 50) {
 

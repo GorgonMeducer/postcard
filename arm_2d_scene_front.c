@@ -88,6 +88,7 @@ typedef struct system_cfg_t {
         bool bUseA4;
         bool bValid;
         bool bDryRun;
+        bool bNoBackgroundColour;
     } Input;
 
     struct {

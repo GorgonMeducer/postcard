@@ -58,6 +58,7 @@ typedef struct system_cfg_t {
         bool bUseA4;
         bool bValid;
         bool bDryRun;
+        bool bNoBackgroundColour;
     } Input;
 
     struct {
@@ -177,6 +178,11 @@ arm_2d_err_t process_args(int argc, char* argv[])
             continue;
         }
 
+        if ( 0 == strncmp(argv[n], "--no_bg_color", sizeof("--no_bg_color")-1)) {
+            SYSTEM_CFG.Input.bNoBackgroundColour = true;
+            continue;
+        }
+
         if (    (0 == strncmp(argv[n], "--help", 6)) 
             ||  (0 == strncmp(argv[n], "-h", 2))) {
             bInputIsValid = false;
@@ -223,6 +229,7 @@ static void print_help(void)
     printf("\t-t [text path]     Input text file.\r\n");
     printf("\t--A4, --a4         Use A4 papers rather than A5 papers for printing.\r\n");
     printf("\t--dryrun           Generate PDF and skip printing.\r\n");
+    printf("\t--no_bg_color      No background colour for the story board.\r\n");
     printf("\r\n");
 }
 
