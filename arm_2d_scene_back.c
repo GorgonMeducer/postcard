@@ -149,7 +149,14 @@ const
 struct {
     implement(arm_2d_user_font_t);
     arm_2d_char_idx_t tUTF8Table;
-} ARM_2D_FONT_BradleyHand64_A8;
+} ARM_2D_FONT_BradleyHand_A8;
+
+extern
+const
+struct {
+    implement(arm_2d_user_font_t);
+    arm_2d_char_idx_t tUTF8Table;
+} ARM_2D_FONT_Chalkboard_A8;
 
 /*============================ PROTOTYPES ====================================*/
 /*============================ LOCAL VARIABLES ===============================*/
@@ -160,6 +167,7 @@ static void __on_scene_back_load(arm_2d_scene_t *ptScene)
     user_scene_back_t *ptThis = (user_scene_back_t *)ptScene;
     ARM_2D_UNUSED(ptThis);
 
+    text_box_on_load(&this.tStoryBoard);
 }
 
 static void __after_scene_back_switching(arm_2d_scene_t *ptScene)
@@ -174,6 +182,8 @@ static void __on_scene_back_depose(arm_2d_scene_t *ptScene)
     user_scene_back_t *ptThis = (user_scene_back_t *)ptScene;
     ARM_2D_UNUSED(ptThis);
     
+    text_box_depose(&this.tStoryBoard);
+
     ptScene->ptPlayer = NULL;
     
     arm_foreach(int64_t,this.lTimestamp, ptItem) {
@@ -209,12 +219,16 @@ static void __on_scene_back_frame_start(arm_2d_scene_t *ptScene)
     user_scene_back_t *ptThis = (user_scene_back_t *)ptScene;
     ARM_2D_UNUSED(ptThis);
 
+    text_box_on_frame_start(&this.tStoryBoard);
+
 }
 
 static void __on_scene_back_frame_complete(arm_2d_scene_t *ptScene)
 {
     user_scene_back_t *ptThis = (user_scene_back_t *)ptScene;
     ARM_2D_UNUSED(ptThis);
+
+    text_box_on_frame_complete(&this.tStoryBoard);
 
     if (!this.bFinishedDrawing) {
         this.bFinishedDrawing = true;
@@ -340,12 +354,23 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_back_handler)
                                                                                         });
 
                             arm_2d_dock(__item_region, 50) {
+
+
+                                text_box_show(  &this.tStoryBoard, 
+                                                ptTile, 
+                                                &__dock_region,
+                                                (__arm_2d_color_t) {GLCD_COLOR_BLACK},
+                                                255,
+                                                bIsNewFrame);
+                            #if 0
                                 arm_lcd_text_set_draw_region(&__dock_region);
-                                arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_BradleyHand64_A8);
-                                arm_lcd_text_set_scale(0.70f);
+                                arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_Chalkboard_A8);
+                                //arm_lcd_text_set_scale(0.70f);
+                                arm_lcd_text_set_scale(0.0f);
                                 arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
                                 arm_lcd_printf("%s", SYSTEM_CFG.Story.pchStory);
-                                arm_lcd_text_set_scale(1.00f);
+                                //arm_lcd_text_set_scale(1.00f);
+                            #endif
                             }
                         }
 
@@ -413,7 +438,26 @@ user_scene_back_t *__arm_2d_scene_back_init(   arm_2d_scene_player_t *ptDispAdap
     };
 
     /* ------------   initialize members of user_scene_back_t begin ---------------*/
+    /* initialize textbox */
+    do {
+        text_box_c_str_reader_init( &this.tCStringReader,
+                                    SYSTEM_CFG.Story.pchStory,
+                                    SYSTEM_CFG.Story.tSize);
 
+        text_box_cfg_t tCFG = {
+            .ptFont = (arm_2d_font_t *)&ARM_2D_FONT_Chalkboard_A8,
+            .tStreamIO = {
+                .ptIO       = &TEXT_BOX_IO_C_STRING_READER,
+                .pTarget    = (uintptr_t)&this.tCStringReader,
+            },
+            .tLineAlign = TEXT_BOX_LINE_ALIGN_JUSTIFIED,
+            //.fScale = 1.1f,
+
+            .ptScene = (arm_2d_scene_t *)ptThis,
+        };
+
+        text_box_init(&this.tStoryBoard, &tCFG);
+    } while(0);
 
     /* ------------   initialize members of user_scene_back_t end   ---------------*/
 
