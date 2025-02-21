@@ -455,6 +455,7 @@ user_scene_back_t *__arm_2d_scene_back_init(   arm_2d_scene_player_t *ptDispAdap
             },
             .tLineAlign = TEXT_BOX_LINE_ALIGN_JUSTIFIED,
             //.fScale = 1.0f,
+            .chSpaceBetweenParagraph = 20,
 
             .ptScene = (arm_2d_scene_t *)ptThis,
         };
