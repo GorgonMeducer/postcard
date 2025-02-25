@@ -88,6 +88,7 @@ typedef struct system_cfg_t {
         bool bValid;
         bool bDryRun;
         bool bNoBackgroundColour;
+        float fScale;
     } Input;
 
     struct {
@@ -358,22 +359,12 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_back_handler)
 
                             arm_2d_dock(__item_region, 50) {
 
-
                                 text_box_show(  &this.tStoryBoard, 
                                                 ptTile, 
                                                 &__dock_region,
                                                 (__arm_2d_color_t) {GLCD_COLOR_BLACK},
                                                 255,
                                                 bIsNewFrame);
-                            #if 0
-                                arm_lcd_text_set_draw_region(&__dock_region);
-                                arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_Chalkboard_A8);
-                                //arm_lcd_text_set_scale(0.70f);
-                                arm_lcd_text_set_scale(0.0f);
-                                arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
-                                arm_lcd_printf("%s", SYSTEM_CFG.Story.pchStory);
-                                //arm_lcd_text_set_scale(1.00f);
-                            #endif
                             }
                         }
 
@@ -453,8 +444,8 @@ user_scene_back_t *__arm_2d_scene_back_init(   arm_2d_scene_player_t *ptDispAdap
                 .ptIO       = &TEXT_BOX_IO_C_STRING_READER,
                 .pTarget    = (uintptr_t)&this.tCStringReader,
             },
-            .tLineAlign = TEXT_BOX_LINE_ALIGN_JUSTIFIED,
-            //.fScale = 1.0f,
+            .u2LineAlign = TEXT_BOX_LINE_ALIGN_JUSTIFIED,
+            .fScale = SYSTEM_CFG.Input.fScale,
             .chSpaceBetweenParagraph = 20,
 
             .ptScene = (arm_2d_scene_t *)ptThis,

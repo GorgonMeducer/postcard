@@ -89,6 +89,7 @@ typedef struct system_cfg_t {
         bool bValid;
         bool bDryRun;
         bool bNoBackgroundColour;
+        float fScale;
     } Input;
 
     struct {

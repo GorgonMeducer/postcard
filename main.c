@@ -59,6 +59,7 @@ typedef struct system_cfg_t {
         bool bValid;
         bool bDryRun;
         bool bNoBackgroundColour;
+        float fScale;
     } Input;
 
     struct {
@@ -127,7 +128,6 @@ arm_2d_err_t process_args(int argc, char* argv[])
     }
 
     for (int n = 0; n < argc; n++) {
-        //printf("[%s]\r\n", argv[n]);
 
         if (0 == n) {
             continue;
@@ -147,6 +147,17 @@ arm_2d_err_t process_args(int argc, char* argv[])
             }
 
             SYSTEM_CFG.Input.pchInputPicturePath = argv[n];
+            continue;
+        }
+
+        if (0 == strncmp(argv[n], "-ratio", 6)) {
+            n++;
+            if (n >= argc) {
+                bInputIsValid = false;
+                break;
+            }
+
+            SYSTEM_CFG.Input.fScale = SDL_atof(argv[n]);
             continue;
         }
 

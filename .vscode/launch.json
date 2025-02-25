@@ -12,6 +12,7 @@
                 "-t", 
                 "test/story.txt",
                 "--no_bg_color",
+                "-ratio","0.95",
                 "--dryrun",
             ],
             "stopAtEntry": false,
