@@ -24,6 +24,7 @@
 #include "arm_2d_scenes.h"
 #include "arm_2d_disp_adapters.h"
 #include "arm_2d_scene_front.h"
+#include "arm_2d_scene_oneside.h"
 
 #include "__arm_2d_impl.h"
 
@@ -59,6 +60,7 @@ typedef struct system_cfg_t {
         bool bValid;
         bool bDryRun;
         bool bNoBackgroundColour;
+        bool bOneSideMode;
         float fScale;
     } Input;
 
@@ -189,6 +191,11 @@ arm_2d_err_t process_args(int argc, char* argv[])
             continue;
         }
 
+        if ( 0 == strncmp(argv[n], "--oneside", 9)) {
+            SYSTEM_CFG.Input.bOneSideMode = true;
+            continue;
+        }
+
         if ( 0 == strncmp(argv[n], "--no_bg_color", sizeof("--no_bg_color")-1)) {
             SYSTEM_CFG.Input.bNoBackgroundColour = true;
             continue;
@@ -209,6 +216,10 @@ arm_2d_err_t process_args(int argc, char* argv[])
         return ARM_2D_ERR_MISSING_PARAM;
     }
 
+    if (SYSTEM_CFG.Input.fScale <= 0.1f) {
+        SYSTEM_CFG.Input.fScale = 1.0f;
+    }
+
     return ARM_2D_ERR_NONE;
 }
 
@@ -218,7 +229,11 @@ arm_2d_err_t process_args(int argc, char* argv[])
 
 int app_2d_main_thread (void *argument)
 {
-    arm_2d_scene_front_init(&DISP0_ADAPTER);
+    if (SYSTEM_CFG.Input.bOneSideMode) {
+        arm_2d_scene_oneside_init(&DISP0_ADAPTER);
+    } else {
+        arm_2d_scene_front_init(&DISP0_ADAPTER);
+    }
 
     while (1) {
         if (VT_is_request_quit()) {
@@ -242,6 +257,7 @@ static void print_help(void)
     printf("\t--A4, --a4                Use A4 papers rather than A5 papers for printing.\r\n");
     printf("\t--dryrun                  Generate PDF and skip printing.\r\n");
     printf("\t--no_bg_color             No background colour for the story board.\r\n");
+    printf("\t--oneside                 Use One-Side layout.\r\n");
     printf("\r\n");
 }
 
@@ -446,32 +462,60 @@ int main(int argc, char* argv[])
             }
         }
 
-        /* generate PDF */
-        do {
-            static char s_chCommandLine[256] = {0};
-            snprintf(  s_chCommandLine, 
-                        dimof(s_chCommandLine), 
-                        "convert %s %s %s",
-                        SYSTEM_CFG.Output.chFrontFileName,
-                        SYSTEM_CFG.Output.chBackFileName,
-                        SYSTEM_CFG.Output.chCombinedFileName);
+        if (SYSTEM_CFG.Input.bOneSideMode) {
+            /* generate PDF */
+            do {
+                static char s_chCommandLine[256] = {0};
+                snprintf(  s_chCommandLine, 
+                            dimof(s_chCommandLine), 
+                            "convert %s %s",
+                            SYSTEM_CFG.Output.chBackFileName,
+                            SYSTEM_CFG.Output.chCombinedFileName);
 
-            run_os_command(s_chCommandLine);
-        } while(0);
+                run_os_command(s_chCommandLine);
+            } while(0);
+        } else {
+            /* generate PDF */
+            do {
+                static char s_chCommandLine[256] = {0};
+                snprintf(  s_chCommandLine, 
+                            dimof(s_chCommandLine), 
+                            "convert %s %s %s",
+                            SYSTEM_CFG.Output.chFrontFileName,
+                            SYSTEM_CFG.Output.chBackFileName,
+                            SYSTEM_CFG.Output.chCombinedFileName);
+
+                run_os_command(s_chCommandLine);
+            } while(0);
+        }
 
         /* printf PDF */
         do {
             static char s_chCommandLine[256] = {0};
-            if (SYSTEM_CFG.Input.bUseA4) {
-                snprintf(  s_chCommandLine, 
-                            dimof(s_chCommandLine), 
-                            "lp -o media=A4 -o sides=two-sided-short-edge -o ColorModel=Color -o orientation-requested=4 -o fit-to-page -o MediaType=PhotographicGlossy %s",
-                            SYSTEM_CFG.Output.chCombinedFileName);
+            if (SYSTEM_CFG.Input.bOneSideMode) {
+                if (SYSTEM_CFG.Input.bUseA4) {
+                    snprintf(  s_chCommandLine, 
+                                dimof(s_chCommandLine), 
+                                "lp -o media=A4 -o sides=two-sided-short-edge -o ColorModel=Color -o orientation-requested=4 -o fit-to-page -o MediaType=PhotographicGlossy %s",
+                                SYSTEM_CFG.Output.chCombinedFileName);
+                } else {
+                    snprintf(  s_chCommandLine, 
+                                dimof(s_chCommandLine), 
+                                "lp -o media=A5 -o sides=two-sided-short-edge -o ColorModel=Color -o orientation-requested=4 -o fit-to-page -o MediaType=PhotographicGlossy %s",
+                                SYSTEM_CFG.Output.chCombinedFileName);
+                }
             } else {
-                snprintf(  s_chCommandLine, 
-                            dimof(s_chCommandLine), 
-                            "lp -o media=A5 -o sides=two-sided-short-edge -o ColorModel=Color -o orientation-requested=4 -o fit-to-page -o MediaType=PhotographicGlossy %s",
-                            SYSTEM_CFG.Output.chCombinedFileName);
+                if (SYSTEM_CFG.Input.bUseA4) {
+                    snprintf(  s_chCommandLine, 
+                                dimof(s_chCommandLine), 
+                                "lp -o media=A4 -o sides=two-sided-short-edge -o ColorModel=Color -o orientation-requested=4 -o fit-to-page %s",
+                                SYSTEM_CFG.Output.chCombinedFileName);
+                } else {
+                    snprintf(  s_chCommandLine, 
+                                dimof(s_chCommandLine), 
+                                "lp -o media=A5 -o sides=two-sided-short-edge -o ColorModel=Color -o orientation-requested=4 -o fit-to-page %s",
+                                SYSTEM_CFG.Output.chCombinedFileName);
+                }
             }
             if (SYSTEM_CFG.Input.bDryRun) {
                 printf("\r\n\r\n It is dry-run mode. Please use the following command line to print: \r\n %s\r\n", s_chCommandLine);
@@ -484,12 +528,15 @@ int main(int argc, char* argv[])
         /* delete temporary files*/
         do {
             static char s_chCommandLine[256] = {0};
-            snprintf(  s_chCommandLine, 
-                        dimof(s_chCommandLine), 
-                        "rm %s",
-                        SYSTEM_CFG.Output.chFrontFileName);
 
-            run_os_command(s_chCommandLine);
+            if (!SYSTEM_CFG.Input.bOneSideMode) {
+                snprintf(  s_chCommandLine, 
+                            dimof(s_chCommandLine), 
+                            "rm %s",
+                            SYSTEM_CFG.Output.chFrontFileName);
+
+                run_os_command(s_chCommandLine);
+            }
 
             memset(s_chCommandLine, 0, sizeof(s_chCommandLine));
             snprintf(  s_chCommandLine, 

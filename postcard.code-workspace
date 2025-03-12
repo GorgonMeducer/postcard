@@ -18,7 +18,8 @@
 			"unordered_map": "c",
 			"utility": "c",
 			"valarray": "c",
-			"vector": "c"
+			"vector": "c",
+			"arm_2d_disp_adapters.h": "c"
 		},
 		"sarif-viewer.connectToGithubCodeScanning": "off",
 		"clangd.arguments": []
