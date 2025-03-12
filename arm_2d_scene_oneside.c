@@ -486,8 +486,8 @@ user_scene_oneside_t *__arm_2d_scene_oneside_init(   arm_2d_scene_player_t *ptDi
                 .pTarget    = (uintptr_t)&this.tCStringReader,
             },
             .u2LineAlign = TEXT_BOX_LINE_ALIGN_JUSTIFIED,
-            .fScale = 0.88f * SYSTEM_CFG.Input.fScale,
-            .chSpaceBetweenParagraph = 20,
+            .fScale = 0.90f * SYSTEM_CFG.Input.fScale,
+            .chSpaceBetweenParagraph = 10,
 
             .ptScene = (arm_2d_scene_t *)ptThis,
         };
