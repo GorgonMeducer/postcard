@@ -465,12 +465,12 @@ int main(int argc, char* argv[])
             if (SYSTEM_CFG.Input.bUseA4) {
                 snprintf(  s_chCommandLine, 
                             dimof(s_chCommandLine), 
-                            "lp -o media=A4 -o sides=two-sided-short-edge -o ColorModel=Color -o orientation-requested=4 -o fit-to-page %s",
+                            "lp -o media=A4 -o sides=two-sided-short-edge -o ColorModel=Color -o orientation-requested=4 -o fit-to-page -o MediaType=PhotographGlossy %s",
                             SYSTEM_CFG.Output.chCombinedFileName);
             } else {
                 snprintf(  s_chCommandLine, 
                             dimof(s_chCommandLine), 
-                            "lp -o media=A5 -o sides=two-sided-short-edge -o ColorModel=Color -o orientation-requested=4 -o fit-to-page %s",
+                            "lp -o media=A5 -o sides=two-sided-short-edge -o ColorModel=Color -o orientation-requested=4 -o fit-to-page -o MediaType=PhotographGlossy %s",
                             SYSTEM_CFG.Output.chCombinedFileName);
             }
             if (SYSTEM_CFG.Input.bDryRun) {
