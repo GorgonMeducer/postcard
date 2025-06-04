@@ -116,6 +116,11 @@ extern system_cfg_t SYSTEM_CFG;
 extern 
 const arm_2d_tile_t c_tileOnArmLogoCCCA8888;
 
+extern
+const arm_2d_tile_t c_tileEventLogoA4Mask;
+
+extern const arm_2d_tile_t c_tileArmLogoMask;
+
 extern 
 const arm_2d_tile_t c_tileOnArmLogoMask;
 
@@ -265,7 +270,7 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
 
     arm_2d_canvas(ptTile, __top_canvas) {
 
-        arm_2d_dock(__top_canvas, 100, 100, 100, 50) {
+        arm_2d_dock(__top_canvas, 150, 150, 100, 100) {
 
             arm_2d_layout(__dock_region) {
                 
@@ -285,44 +290,36 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                     arm_2d_layout(__item_region, BOTTOM_UP) {
 
                         /* draw footnote */
-                        __item_line_dock_vertical(250) {
+                        __item_line_dock_vertical(100) {
 
-                            arm_lcd_text_set_target_framebuffer(ptTile);
+                            arm_2d_layout(__item_region, RIGHT_TO_LEFT) {
 
-                            arm_lcd_text_set_scale(1.05f);
-                            arm_2d_size_t tStringSize = 
-                                arm_lcd_printf_to_buffer((arm_2d_font_t *)&ARM_2D_FONT_Lato64_A8,
-                                                        "The Future of AI is Built ");
+                                __item_line_dock_horizontal(c_tileArmLogoMask.tRegion.tSize.iWidth) {
 
-                            arm_2d_dock_right( __item_region, 
-                                                        c_tileOnArmLogoMask.tRegion.tSize.iWidth 
-                                                    +   tStringSize.iWidth) {
-
-                                /* draw string */
-                                arm_2d_align_mid_left(__right_region, tStringSize) {
-
-                                    __mid_left_region.tLocation.iY -= 8;
-
-                                    arm_lcd_text_set_draw_region(&__mid_left_region);
-                                    arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
-                                    arm_lcd_printf_buffer(0);
-
-                                    arm_lcd_text_set_scale(1.0f);
+                                    arm_2d_align_centre(__item_region, c_tileArmLogoMask.tRegion.tSize) {
+                                        arm_2d_fill_colour_with_mask_and_opacity(
+                                                ptTile,
+                                                &__centre_region,
+                                                &c_tileArmLogoMask,
+                                                (__arm_2d_color_t) {GLCD_COLOR_BLACK},
+                                                255 - 32);
+                                    }
                                 }
 
-                                /* draw OnArm logo */
-                                arm_2d_align_mid_right(__right_region, c_tileOnArmLogoMask.tRegion.tSize) {
+                                __item_line_dock_horizontal(c_tileEventLogoA4Mask.tRegion.tSize.iWidth, 0, 50, 0, 0) {
 
-                                    arm_2d_fill_colour_with_mask_and_opacity(
-                                        ptTile,
-                                        &__mid_right_region,
-                                        &c_tileOnArmLogoMask,
-                                        (__arm_2d_color_t) {GLCD_COLOR_BLACK},
-                                        255 - 32);
-
+                                    arm_2d_align_centre(__item_region, c_tileEventLogoA4Mask.tRegion.tSize) {
+                                        arm_2d_fill_colour_with_a4_mask_and_opacity(
+                                                ptTile,
+                                                &__centre_region,
+                                                &c_tileEventLogoA4Mask,
+                                                (__arm_2d_color_t) {GLCD_COLOR_BLACK},
+                                                255 - 32);
+                                    }
                                 }
                             }
 
+                        #if 0
                             arm_2d_dock_left( __item_region, (__item_region.tSize.iWidth / 2) - 100) {
 
                                 arm_lcd_text_set_draw_region(&__left_region);
@@ -345,6 +342,7 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                                                                 (__arm_2d_color_t) {GLCD_COLOR_BLACK},
                                                                 255-32);
                             }
+                        #endif
                         }
 
                         /* draw story */
