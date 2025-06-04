@@ -53,3 +53,4 @@ build/*
 *.co
 .DS_Store
 *.ttf
+*.pdf

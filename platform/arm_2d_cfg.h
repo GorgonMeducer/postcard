@@ -196,14 +196,14 @@ extern "C" {
 // <i> The width of your screen for running benchmark
 // <i> Default: 320
 #ifndef __GLCD_CFG_SCEEN_WIDTH__
-#   define __GLCD_CFG_SCEEN_WIDTH__                                     2480
+#   define __GLCD_CFG_SCEEN_WIDTH__                                     1748
 #endif
 
 // <o>Height of the screen <8-32767>
 // <i> The height of your screen for running benchmark
 // <i> Default: 240
 #ifndef __GLCD_CFG_SCEEN_HEIGHT__
-#   define __GLCD_CFG_SCEEN_HEIGHT__                                    1748
+#   define __GLCD_CFG_SCEEN_HEIGHT__                                    2480 
 #endif
 
 // <o>Number of iterations <1-2000>

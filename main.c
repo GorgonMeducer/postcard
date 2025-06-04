@@ -23,7 +23,7 @@
 #include "arm_2d_helper.h"
 #include "arm_2d_scenes.h"
 #include "arm_2d_disp_adapters.h"
-#include "arm_2d_scene_front.h"
+//#include "arm_2d_scene_front.h"
 #include "arm_2d_scene_oneside.h"
 
 #include "__arm_2d_impl.h"
@@ -230,11 +230,11 @@ arm_2d_err_t process_args(int argc, char* argv[])
 
 int app_2d_main_thread (void *argument)
 {
-    if (SYSTEM_CFG.Input.bOneSideMode) {
+    //if (SYSTEM_CFG.Input.bOneSideMode) {
         arm_2d_scene_oneside_init(&DISP0_ADAPTER);
-    } else {
-        arm_2d_scene_front_init(&DISP0_ADAPTER);
-    }
+    //} else {
+    //    arm_2d_scene_front_init(&DISP0_ADAPTER);
+    //}
 
     while (1) {
         if (VT_is_request_quit()) {
