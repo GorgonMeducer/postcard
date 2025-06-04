@@ -46,7 +46,8 @@ else ifeq ($(shell uname), Darwin)
 	SIZE    := $(CROSS)size
 	OUT     := build/postcard
 	RM      := rm -rf
-	CCFLAG  += -DSDL_DISABLE_ARM_NEON_H -D_THREAD_SAFE
+	CCFLAG  += -D_THREAD_SAFE
+	CCFLAG  += -ffast-math -Wno-deprecated-ofast -Wno-unknown-warning-option
 	CC_INC  += /opt/homebrew/include
 	LD_INC  += /opt/homebrew/lib
 	LD_LIB  := SDL2 SDL2main
