@@ -270,18 +270,43 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
 
     arm_2d_canvas(ptTile, __top_canvas) {
 
-        arm_2d_dock(__top_canvas, 150, 150, 100, 100) {
+        arm_2d_dock(__top_canvas, 120, 120, 100, 100) {
 
             arm_2d_layout(__dock_region) {
                 
-                __item_line_dock_vertical(46) {
+                __item_line_dock_vertical(1024) {
+
+
+                    arm_2d_location_t tImageCentre = {
+                        .iX = SYSTEM_CFG.Picture.tTile.tRegion.tSize.iWidth / 2,
+                        .iY = SYSTEM_CFG.Picture.tTile.tRegion.tSize.iHeight / 2,
+                    };
+
+                    float fScaleW = (float)__item_region.tSize.iWidth / (float)SYSTEM_CFG.Picture.tTile.tRegion.tSize.iWidth;
+                    float fScaleH = (float)__item_region.tSize.iHeight / (float)SYSTEM_CFG.Picture.tTile.tRegion.tSize.iHeight;
+                    float fScale = MIN(fScaleW, fScaleH);
+
+                    arm_2dp_tile_transform_with_src_mask_and_opacity(
+                        &this.tTransOP,
+                        &SYSTEM_CFG.Picture.tTile,
+                        &SYSTEM_CFG.Picture.tMaskTile,
+                        ptTile,
+                        &__item_region,
+                        tImageCentre,
+                        0.0f,
+                        fScale,
+                        255);
+
+                }
+
+                __item_line_dock_vertical(46, 0, 0, 50, 0) {
                     arm_lcd_text_set_target_framebuffer(ptTile);
                     
                     arm_lcd_text_set_draw_region(&__item_region);
                     arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
                     arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_CalibriBold46_A8);
                     //arm_lcd_text_set_scale(1.1f);
-                    arm_lcd_printf_label(ARM_2D_ALIGN_MIDDLE_LEFT, "March 2025, NürnbergMesse GmbH");
+                    arm_lcd_printf_label(ARM_2D_ALIGN_MIDDLE_LEFT, "3 June 2025, Silverstone");
                     //arm_lcd_text_set_scale(1.0f);
                 }
 
@@ -306,7 +331,7 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                                     }
                                 }
 
-                                __item_line_dock_horizontal(c_tileEventLogoA4Mask.tRegion.tSize.iWidth, 0, 50, 0, 0) {
+                                __item_line_dock_horizontal(c_tileEventLogoA4Mask.tRegion.tSize.iWidth, 0, 50, -30, 0) {
 
                                     arm_2d_align_centre(__item_region, c_tileEventLogoA4Mask.tRegion.tSize) {
                                         arm_2d_fill_colour_with_a4_mask_and_opacity(
@@ -348,63 +373,26 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                         /* draw story */
                         __item_line_dock_vertical() {
                         
-                            arm_2d_layout(__item_region) {
-
-                                __item_line_dock_horizontal(700, 0, 50, 0, 0) {
-
-                                    arm_2d_layout(__item_region) {
-
-                                        __item_line_dock_vertical(500, 0, 0, 50, 0) {
-                                            //arm_2d_draw_box(ptTile, &__item_region, 1, GLCD_COLOR_RED, 255);
-
-                                            arm_2d_location_t tImageCentre = {
-                                                .iX = SYSTEM_CFG.Picture.tTile.tRegion.tSize.iWidth / 2,
-                                                .iY = SYSTEM_CFG.Picture.tTile.tRegion.tSize.iHeight / 2,
-                                            };
-
-                                            float fScaleW = (float)__item_region.tSize.iWidth / (float)SYSTEM_CFG.Picture.tTile.tRegion.tSize.iWidth;
-                                            float fScaleH = (float)__item_region.tSize.iHeight / (float)SYSTEM_CFG.Picture.tTile.tRegion.tSize.iHeight;
-                                            float fScale = MIN(fScaleW, fScaleH);
-                        
-                                            arm_2dp_tile_transform_with_src_mask_and_opacity(
-                                                &this.tTransOP,
-                                                &SYSTEM_CFG.Picture.tTile,
-                                                &SYSTEM_CFG.Picture.tMaskTile,
-                                                ptTile,
-                                                &__item_region,
-                                                tImageCentre,
-                                                0.0f,
-                                                fScale,
-                                                255);
-                                            
-                                            }
-                                        }
-
-                                }
-
-                                __item_line_dock_horizontal() {
-
-                                    if (!SYSTEM_CFG.Input.bNoBackgroundColour) {
-                                        arm_2d_fill_colour_with_vertical_alpha_gradient_and_opacity(ptTile, 
-                                                                                                    &__item_region, 
-                                                                                                    (__arm_2d_color_t){__RGB(00, 0x8f, 0xbe)}, 
-                                                                                                    128, 
-                                                                                                    (arm_2d_alpha_samples_2pts_t){
-                                                                                                        {128, 0}
-                                                                                                    });
-                                    }
-
-                                    arm_2d_dock(__item_region, 0,0, 50, 0) {
-
-                                        text_box_show(  &this.tStoryBoard, 
-                                                        ptTile, 
-                                                        &__dock_region,
-                                                        (__arm_2d_color_t) {GLCD_COLOR_BLACK},
-                                                        255,
-                                                        bIsNewFrame);
-                                    }
-                                }
+                            if (!SYSTEM_CFG.Input.bNoBackgroundColour) {
+                                arm_2d_fill_colour_with_vertical_alpha_gradient_and_opacity(ptTile, 
+                                                                                            &__item_region, 
+                                                                                            (__arm_2d_color_t){__RGB(00, 0x8f, 0xbe)}, 
+                                                                                            128, 
+                                                                                            (arm_2d_alpha_samples_2pts_t){
+                                                                                                {128, 0}
+                                                                                            });
                             }
+
+                            arm_2d_dock(__item_region, 0,0, 20, 0) {
+
+                                text_box_show(  &this.tStoryBoard, 
+                                                ptTile, 
+                                                &__dock_region,
+                                                (__arm_2d_color_t) {GLCD_COLOR_BLACK},
+                                                255,
+                                                bIsNewFrame);
+                            }
+
                         }
 
                     }
@@ -484,7 +472,7 @@ user_scene_oneside_t *__arm_2d_scene_oneside_init(   arm_2d_scene_player_t *ptDi
                 .pTarget    = (uintptr_t)&this.tCStringReader,
             },
             .u2LineAlign = TEXT_BOX_LINE_ALIGN_JUSTIFIED,
-            .fScale = 0.90f * SYSTEM_CFG.Input.fScale,
+            .fScale = 0.85f * SYSTEM_CFG.Input.fScale,
             .chSpaceBetweenParagraph = 10,
 
             .ptScene = (arm_2d_scene_t *)ptThis,
