@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "postcard.h"
 
 #if defined(__clang__)
 #   pragma clang diagnostic push
@@ -81,34 +82,6 @@
 #define this (*ptThis)
 
 /*============================ TYPES =========================================*/
-typedef struct system_cfg_t {
-    struct {
-        char *pchInputPicturePath;
-        char *pchStoryPath;
-        bool bUseA4;
-        bool bValid;
-        bool bDryRun;
-        bool bNoBackgroundColour;
-        bool bOneSideMode;
-        float fScale;
-    } Input;
-
-    struct {
-        char *pchStory;
-        size_t tSize;
-    } Story;
-
-    struct {
-        arm_2d_tile_t tTile;
-        arm_2d_tile_t tMaskTile;
-    } Picture;
-
-    struct {
-        char chFrontFileName[64];
-        char chBackFileName[64];
-        char chCombinedFileName[64];
-    } Output;
-} system_cfg_t;
 
 /*============================ GLOBAL VARIABLES ==============================*/
 
