@@ -6,7 +6,7 @@
             "intelliSenseMode": "macos-clang-arm64",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/sdl2/32/include",
+                "/opt/homebrew/include/SDL2",
                 "${workspaceFolder}/platform",
                 "${workspaceFolder}/platform/math",
                 "${workspaceFolder}/platform/math/dsp",

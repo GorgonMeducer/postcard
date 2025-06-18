@@ -8,6 +8,8 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
 #include "arm_2d_disp_adapter_0.h"
 
 #if     __DISP0_CFG_ROTATE_SCREEN__ == 1\

@@ -306,6 +306,7 @@ static bool load_picture(const char *pchPath, arm_2d_tile_t *ptTile, arm_2d_tile
     memset(ptMask, 0, sizeof(arm_2d_tile_t));
 
     SDL_Surface *ptImage = SDL_LoadBMP(pchPath);
+
     do {
         if (!ptImage) {
             break;

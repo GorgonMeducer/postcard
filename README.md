@@ -57,7 +57,7 @@ The `--recursive` option is used to clone all the submodules included in the pro
 Second, please install the required modules with the following command:
 
 ```sh
-sudo apt-get update && sudo apt-get install -y build-essential libsdl2-dev gdb-multiarch imagemagick cups
+sudo apt-get update && sudo apt-get install -y build-essential libsdl2-dev libsdl2-image-dev gdb-multiarch imagemagick cups
 ```
 
 
@@ -107,7 +107,7 @@ Please copy the part in the red box and paste to the shell to "**add Howbrew to 
 After that, please install sdl2 with the following command:
 
 ```sh
-brew install sdl2
+brew install sdl2 sdl2_image
 ```
 
 
