@@ -33,6 +33,7 @@ extern "C" {
 typedef struct system_cfg_t {
     struct {
         char *pchInputPicturePath;
+        char *pchLogoPath;
         char *pchStoryPath;
         char *pchEventName;
         bool bUseA4;
@@ -52,6 +53,11 @@ typedef struct system_cfg_t {
         arm_2d_tile_t tTile;
         arm_2d_tile_t tMaskTile;
     } Picture;
+
+    struct {
+        arm_2d_tile_t tTile;
+        arm_2d_tile_t tMaskTile;
+    } Logo;
 
     struct {
         char chFrontFileName[64];

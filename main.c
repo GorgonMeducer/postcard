@@ -193,6 +193,23 @@ arm_2d_err_t process_args(int argc, char* argv[])
             SYSTEM_CFG.Input.pchEventName = argv[n];
             continue;
         }
+
+        if (0 == strncmp(argv[n], "--logo", 6)) {
+            n++;
+            if (n >= argc) {
+                bInputIsValid = false;
+                break;
+            }
+
+            if (!file_exists(argv[n], "r")) {
+                printf("ERROR: Cannot find the logo from \"%s\".", argv[n]);
+                bInputIsValid = false;
+                break;
+            }
+
+            SYSTEM_CFG.Input.pchLogoPath = argv[n];
+            continue;
+        }
     }
 
     SYSTEM_CFG.Input.bValid = bInputIsValid;
@@ -246,6 +263,7 @@ static void print_help(void)
     printf("\t--no_bg_color             No background colour for the story board.\r\n");
     printf("\t--oneside                 Use One-Side layout.\r\n");
     printf("\t--event <Event Name>      The event name string used in postcard title.\r\n");
+    printf("\t--logo <logo path>        The event logo(*.bmp, *.png etc).\r\n");
     printf("\r\n");
 }
 
@@ -429,14 +447,24 @@ int main(int argc, char* argv[])
             break;
         }
 
-        /* load png */
+        /* load picture */
         if (!load_picture(SYSTEM_CFG.Input.pchInputPicturePath,
                          &SYSTEM_CFG.Picture.tTile,
                          &SYSTEM_CFG.Picture.tMaskTile)) {
-            printf("ERROR: failed to load bmp file, %s\n", SDL_GetError());
+            printf("ERROR: failed to load picture, %s\n", SDL_GetError());
             ret = -1;
             break;
         };
+
+        /* load logo */
+        if (NULL != SYSTEM_CFG.Input.pchLogoPath) {
+            /* load logo */
+            if (!load_picture(  SYSTEM_CFG.Input.pchLogoPath,
+                                &SYSTEM_CFG.Logo.tTile,
+                                &SYSTEM_CFG.Logo.tMaskTile)) {
+                printf("WARNING: failed to load logo, %s\n", SDL_GetError());
+            };
+        }
 
         /* initialize temp files */
         do {

@@ -166,14 +166,13 @@ static void __on_scene_oneside_depose(arm_2d_scene_t *ptScene)
     
     text_box_depose(&this.tStoryBoard);
 
-    ptScene->ptPlayer = NULL;
-
-    ARM_2D_OP_DEPOSE(this.tTransOP);
+    ARM_2D_OP_DEPOSE(this.tTransOP[0]);
+    ARM_2D_OP_DEPOSE(this.tTransOP[1]);
     
     arm_foreach(int64_t,this.lTimestamp, ptItem) {
         *ptItem = 0;
     }
-
+    ptScene->ptPlayer = NULL;
     if (!this.bUserAllocated) {
         __arm_2d_free_scratch_memory(ARM_2D_MEM_TYPE_UNSPECIFIED, ptScene);
     }
@@ -261,7 +260,7 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                     float fScale = MIN(fScaleW, fScaleH);
 
                     arm_2dp_tile_transform_with_src_mask_and_opacity(
-                        &this.tTransOP,
+                        &this.tTransOP[0],
                         &SYSTEM_CFG.Picture.tTile,
                         &SYSTEM_CFG.Picture.tMaskTile,
                         ptTile,
@@ -270,7 +269,7 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                         0.0f,
                         fScale,
                         255);
-
+                    ARM_2D_OP_WAIT_ASYNC(&this.tTransOP[0]);
                 }
 
                 __item_line_dock_vertical(46, 0, 0, 50, 0) {
@@ -314,7 +313,7 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                     arm_2d_layout(__item_region, BOTTOM_UP) {
 
                         /* draw footnote */
-                        __item_line_dock_vertical(100) {
+                        __item_line_dock_vertical(120) {
 
                             arm_2d_layout(__item_region, RIGHT_TO_LEFT) {
 
@@ -330,15 +329,33 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                                     }
                                 }
 
-                                __item_line_dock_horizontal(c_tileEventLogoA4Mask.tRegion.tSize.iWidth, 0, 50, -30, 0) {
+                                __item_line_dock_horizontal(0, 50, 0, 0) {
 
-                                    arm_2d_align_centre(__item_region, c_tileEventLogoA4Mask.tRegion.tSize) {
-                                        arm_2d_fill_colour_with_a4_mask_and_opacity(
-                                                ptTile,
-                                                &__centre_region,
-                                                &c_tileEventLogoA4Mask,
-                                                (__arm_2d_color_t) {GLCD_COLOR_BLACK},
-                                                255 - 32);
+                                    float fScale = (float)__item_region.tSize.iHeight / (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iHeight;
+
+                                    arm_2d_size_t tLogoSize = {
+                                        .iWidth = (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iWidth * fScale + 2,
+                                        .iHeight = __item_region.tSize.iHeight,
+                                    };
+
+                                    arm_2d_dock_right(__item_region, tLogoSize.iWidth) {
+                                        arm_2d_location_t tImageCentre = {
+                                            .iX = SYSTEM_CFG.Logo.tTile.tRegion.tSize.iWidth / 2,
+                                            .iY = SYSTEM_CFG.Logo.tTile.tRegion.tSize.iHeight / 2,
+                                        };
+
+                                        arm_2dp_tile_transform_with_src_mask_and_opacity(
+                                            &this.tTransOP[1],
+                                            &SYSTEM_CFG.Logo.tTile,
+                                            &SYSTEM_CFG.Logo.tMaskTile,
+                                            ptTile,
+                                            &__right_region,
+                                            tImageCentre,
+                                            0.0f,
+                                            fScale,
+                                            255);
+
+                                        ARM_2D_OP_WAIT_ASYNC(&this.tTransOP[1]);
                                     }
                                 }
                             }
@@ -481,7 +498,8 @@ user_scene_oneside_t *__arm_2d_scene_oneside_init(   arm_2d_scene_player_t *ptDi
         text_box_init(&this.tStoryBoard, &tCFG);
     } while(0);
 
-    ARM_2D_OP_INIT(this.tTransOP);
+    ARM_2D_OP_INIT(this.tTransOP[0]);
+    ARM_2D_OP_INIT(this.tTransOP[1]);
     /* ------------   initialize members of user_scene_oneside_t end   ---------------*/
 
     arm_2d_scene_player_append_scenes(  ptDispAdapter, 

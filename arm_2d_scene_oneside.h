@@ -87,7 +87,7 @@ ARM_PRIVATE(
     int64_t lTimestamp[1];
     bool bUserAllocated;
     bool bFinishedDrawing;
-    arm_2d_op_trans_msk_opa_t tTransOP;
+    arm_2d_op_trans_msk_opa_t tTransOP[2];
 
     text_box_t tStoryBoard;
     text_box_c_str_reader_t tCStringReader;
