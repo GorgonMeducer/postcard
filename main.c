@@ -238,7 +238,7 @@ static void print_help(void)
     printf("The Postcard is a command line tool that generates and prints out a postcard with given input picture and a story text. \r\n");
     printf("\r\noptions:\r\n");
     printf("\t-h, --help                show this help message and exit\r\n");
-    printf("\t-p <picture path>         Input picture (*.bmp)\r\n");
+    printf("\t-p <picture path>         Input picture (*.bmp, *.png etc)\r\n");
     printf("\t-t <text path>            Input text file.\r\n");
     printf("\t-ratio <scaling ratio>    Font size scaling ratio in floating point, e.g -ratio 0.95 \r\n");
     printf("\t--A4, --a4                Use A4 papers rather than A5 papers for printing.\r\n");
@@ -300,12 +300,33 @@ void __ccc888_to_cccn888(uint8_t *pchSrc, int16_t iPitch, uint32_t *pwDes, int16
     }
 }
 
+void __swap_red_and_blue_for_ccca8888(uint32_t *pwSrc, uint32_t *pwDes, int16_t iWidth, int16_t iHeight)
+{
+    for (int16_t y = 0; y < iHeight; y++) {
+        uint32_t *pwLineSrc = pwSrc;
+        uint32_t *pwLineDes = pwDes;
+
+        for (int16_t x = 0; x < iWidth; x++) {
+            ((uint8_t *)pwLineDes)[0] = ((uint8_t *)pwLineSrc)[2];
+            ((uint8_t *)pwLineDes)[1] = ((uint8_t *)pwLineSrc)[1];
+            ((uint8_t *)pwLineDes)[2] = ((uint8_t *)pwLineSrc)[0];
+            ((uint8_t *)pwLineDes)[3] = ((uint8_t *)pwLineSrc)[3];
+
+            pwLineSrc++;
+            pwLineDes++;
+        }
+
+        pwSrc += iWidth;
+        pwDes += iWidth;
+    }
+}
+
 static bool load_picture(const char *pchPath, arm_2d_tile_t *ptTile, arm_2d_tile_t *ptMask)
 {
     memset(ptTile, 0, sizeof(arm_2d_tile_t));
     memset(ptMask, 0, sizeof(arm_2d_tile_t));
 
-    SDL_Surface *ptImage = IMG_Load(pchPath); //SDL_LoadBMP(pchPath);
+    SDL_Surface *ptImage = IMG_Load(pchPath);
 
     do {
         if (!ptImage) {
@@ -348,7 +369,10 @@ static bool load_picture(const char *pchPath, arm_2d_tile_t *ptTile, arm_2d_tile
                                     ptImage->h);
                 break;
             case 32:
-                memcpy(ptTile->pwBuffer, ptImage->pixels, ptImage->h * ptImage->w * 4);
+                __swap_red_and_blue_for_ccca8888(   (uint32_t *)ptImage->pixels, 
+                                                    ptTile->pwBuffer, 
+                                                    ptImage->w,
+                                                    ptImage->h);
                 break;
             default:
                 return false;
