@@ -299,12 +299,12 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                         "December"
                     };
                     
-
                     arm_lcd_printf_label(ARM_2D_ALIGN_MIDDLE_LEFT, 
-                                        "%d %s %04d, Silverstone",
+                                        "%d %s %04d, %s",
                                         ptTimeinfo->tm_mday,
                                         c_chMonths[ptTimeinfo->tm_mon],
-                                        ptTimeinfo->tm_year + 1900
+                                        ptTimeinfo->tm_year + 1900,
+                                        SYSTEM_CFG.Input.pchEventName
                                         );
                     //arm_lcd_text_set_scale(1.0f);
                 }

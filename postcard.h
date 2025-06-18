@@ -34,6 +34,7 @@ typedef struct system_cfg_t {
     struct {
         char *pchInputPicturePath;
         char *pchStoryPath;
+        char *pchEventName;
         bool bUseA4;
         bool bValid;
         bool bDryRun;
@@ -61,6 +62,7 @@ typedef struct system_cfg_t {
 
 
 /*============================ GLOBAL VARIABLES ==============================*/
+extern system_cfg_t SYSTEM_CFG;
 /*============================ PROTOTYPES ====================================*/
 
 

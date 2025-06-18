@@ -63,6 +63,8 @@ system_cfg_t SYSTEM_CFG = {
         .chBackFileName = {"back_XXXXXXXX"},
         .chCombinedFileName = {"combined_XXXXXXXX"},
     },
+
+    .Input.pchEventName = "Arm GenAI Photo-booth"
 };
 
 /*============================ PROTOTYPES ====================================*/
@@ -180,6 +182,17 @@ arm_2d_err_t process_args(int argc, char* argv[])
             bInputIsValid = false;
             return ARM_2D_ERR_MISSING_PARAM;
         }
+
+        if (0 == strncmp(argv[n], "--event", 7)) {
+            n++;
+            if (n >= argc) {
+                bInputIsValid = false;
+                break;
+            }
+
+            SYSTEM_CFG.Input.pchEventName = argv[n];
+            continue;
+        }
     }
 
     SYSTEM_CFG.Input.bValid = bInputIsValid;
@@ -232,6 +245,7 @@ static void print_help(void)
     printf("\t--dryrun                  Generate PDF and skip printing.\r\n");
     printf("\t--no_bg_color             No background colour for the story board.\r\n");
     printf("\t--oneside                 Use One-Side layout.\r\n");
+    printf("\t--event <Event Name>      The event name string used in postcard title.\r\n");
     printf("\r\n");
 }
 
