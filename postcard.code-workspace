@@ -19,7 +19,8 @@
 			"utility": "c",
 			"valarray": "c",
 			"vector": "c",
-			"arm_2d_disp_adapters.h": "c"
+			"arm_2d_disp_adapters.h": "c",
+			"__locale": "c"
 		},
 		"sarif-viewer.connectToGithubCodeScanning": "off",
 		"clangd.arguments": []

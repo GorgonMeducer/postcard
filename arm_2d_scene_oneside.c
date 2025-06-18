@@ -27,6 +27,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #if defined(__clang__)
 #   pragma clang diagnostic push
@@ -306,7 +307,32 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                     arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
                     arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_CalibriBold46_A8);
                     //arm_lcd_text_set_scale(1.1f);
-                    arm_lcd_printf_label(ARM_2D_ALIGN_MIDDLE_LEFT, "3 June 2025, Silverstone");
+
+                    time_t now;
+                    time(&now);
+                    struct tm *ptTimeinfo = localtime(&now);
+                    static const char *c_chMonths[] = {
+                        "January",
+                        "February",
+                        "March",
+                        "April",
+                        "May",
+                        "June",
+                        "July",
+                        "August",
+                        "September",
+                        "October",
+                        "November",
+                        "December"
+                    };
+                    
+
+                    arm_lcd_printf_label(ARM_2D_ALIGN_MIDDLE_LEFT, 
+                                        "%d %s %04d, Silverstone",
+                                        ptTimeinfo->tm_mday,
+                                        c_chMonths[ptTimeinfo->tm_mon],
+                                        ptTimeinfo->tm_year + 1900
+                                        );
                     //arm_lcd_text_set_scale(1.0f);
                 }
 
@@ -374,13 +400,14 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                         __item_line_dock_vertical() {
                         
                             if (!SYSTEM_CFG.Input.bNoBackgroundColour) {
-                                arm_2d_fill_colour_with_vertical_alpha_gradient_and_opacity(ptTile, 
-                                                                                            &__item_region, 
-                                                                                            (__arm_2d_color_t){__RGB(00, 0x8f, 0xbe)}, 
-                                                                                            128, 
-                                                                                            (arm_2d_alpha_samples_2pts_t){
-                                                                                                {128, 0}
-                                                                                            });
+                                arm_2d_fill_colour_with_vertical_alpha_gradient_and_opacity(
+                                    ptTile, 
+                                    &__item_region, 
+                                    (__arm_2d_color_t){__RGB(00, 0x8f, 0xbe)}, 
+                                    128, 
+                                    (arm_2d_alpha_samples_2pts_t){
+                                        {128, 0}
+                                    });
                             }
 
                             arm_2d_dock(__item_region, 0,0, 20, 0) {
