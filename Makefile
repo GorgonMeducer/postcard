@@ -33,7 +33,7 @@ ifeq ($(OS),Windows_NT)
 
 	CC_INC  += sdl2/32/include
 	LD_INC  := sdl2/32/lib/x86
-	LD_LIB  := SDL2main SDL2
+	LD_LIB  := SDL2main SDL2 SDL2_image
 	CCFLAG  +=  -w
 	LDFLAG  +=  -Wl,--warn-common
 	LDFLAG  +=  -Wl,--gc-sections
@@ -50,7 +50,7 @@ else ifeq ($(shell uname), Darwin)
 	CCFLAG  += -ffast-math -Wno-deprecated-ofast -Wno-unknown-warning-option
 	CC_INC  += /opt/homebrew/include
 	LD_INC  += /opt/homebrew/lib
-	LD_LIB  := SDL2 SDL2main
+	LD_LIB  := SDL2 SDL2main SDL2_image
 app: $(OUT)
 
 else
@@ -60,7 +60,7 @@ else
 	OUT     := build/postcard
 	RM      := rm -rf
 	CCFLAG  += -w
-	LD_LIB  := SDL2
+	LD_LIB  := SDL2 SDL2_image
 	LDFLAG  +=  -Wl,--warn-common
 	LDFLAG  +=  -Wl,--gc-sections
 app: $(OUT)
