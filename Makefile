@@ -60,7 +60,7 @@ else
 	OUT     := build/postcard
 	RM      := rm -rf
 	CCFLAG  += -w
-	LD_LIB  := SDL2 SDL2_image
+	LD_LIB  := SDL2 SDL2_image m
 	LDFLAG  +=  -Wl,--warn-common
 	LDFLAG  +=  -Wl,--gc-sections
 app: $(OUT)
