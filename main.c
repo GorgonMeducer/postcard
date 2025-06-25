@@ -258,7 +258,7 @@ static void print_help(void)
     printf("\t-h, --help                show this help message and exit\r\n");
     printf("\t-p <picture path>         Input picture (*.bmp, *.png etc)\r\n");
     printf("\t-t <text path>            Input text file.\r\n");
-    printf("\t-ratio <scaling ratio>    Font size scaling ratio in floating point, e.g -ratio 0.95 \r\n");
+    printf("\t-ratio <scaling ratio>    Font size scaling ratio in floating point, e.g -ratio 0.95. Giving zero will enable an experimental auto-scaling feature. \r\n");
     printf("\t--A4, --a4                Use A4 papers rather than A5 papers for printing.\r\n");
     printf("\t--dryrun                  Generate PDF and skip printing.\r\n");
     printf("\t--no_bg_color             No background colour for the story board.\r\n");
