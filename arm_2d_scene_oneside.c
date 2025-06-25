@@ -214,12 +214,32 @@ static void __on_scene_oneside_frame_complete(arm_2d_scene_t *ptScene)
     text_box_on_frame_complete(&this.tStoryBoard);
 
     if (!this.bFinishedDrawing) {
-        this.bFinishedDrawing = true;
+        if (SYSTEM_CFG.Input.bAutoScaling) {
+            int64_t iStoryHeight = text_box_get_line_count(&this.tStoryBoard, 0) * text_box_get_line_height(&this.tStoryBoard);
+
+            float fScale = text_box_get_scale(&this.tStoryBoard);
+            if (iStoryHeight > (int64_t) this.iStoryBoxHeight) {
+                text_box_set_scale(&this.tStoryBoard, fScale - 0.01f);
+            } else {
+                int16_t iDelta = this.iStoryBoxHeight - iStoryHeight;
+                if (iDelta < 150) {
+                    text_box_set_scale(&this.tStoryBoard, fScale - 0.01f);
+                } else if (iDelta < 300) {
+                    this.bFinishedDrawing = true;
+                } else {
+                    text_box_set_scale(&this.tStoryBoard, fScale + 0.01f);
+                }
+            }
+
+        } else {
+            this.bFinishedDrawing = true;
+        }
     } else {
         VT_save_screenshot(SYSTEM_CFG.Output.chBackFileName);
-
         VT_request_quit();
     }
+
+
 }
 
 static void __before_scene_oneside_switching_out(arm_2d_scene_t *ptScene)
@@ -401,6 +421,10 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                             }
 
                             arm_2d_dock(__item_region, 0,0, 20, 0) {
+
+                                if (bIsNewFrame) {
+                                    this.iStoryBoxHeight = __dock_region.tSize.iHeight;
+                                }
 
                                 text_box_show(  &this.tStoryBoard, 
                                                 ptTile, 

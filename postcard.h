@@ -36,11 +36,12 @@ typedef struct system_cfg_t {
         char *pchLogoPath;
         char *pchStoryPath;
         char *pchEventName;
-        bool bUseA4;
-        bool bValid;
-        bool bDryRun;
-        bool bNoBackgroundColour;
-        bool bOneSideMode;
+        uint8_t bUseA4                  : 1;
+        uint8_t bValid                  : 1;
+        uint8_t bDryRun                 : 1;
+        uint8_t bNoBackgroundColour     : 1;
+        uint8_t bOneSideMode            : 1;
+        uint8_t bAutoScaling            : 1;
         float fScale;
     } Input;
 

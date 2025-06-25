@@ -87,6 +87,7 @@ ARM_PRIVATE(
     int64_t lTimestamp[1];
     bool bUserAllocated;
     bool bFinishedDrawing;
+    int16_t iStoryBoxHeight;
     arm_2d_op_trans_msk_opa_t tTransOP[2];
 
     text_box_t tStoryBoard;

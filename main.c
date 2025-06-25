@@ -222,6 +222,7 @@ arm_2d_err_t process_args(int argc, char* argv[])
 
     if (SYSTEM_CFG.Input.fScale <= 0.1f) {
         SYSTEM_CFG.Input.fScale = 1.0f;
+        SYSTEM_CFG.Input.bAutoScaling = true;
     }
 
     return ARM_2D_ERR_NONE;
