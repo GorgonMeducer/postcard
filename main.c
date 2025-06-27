@@ -139,6 +139,17 @@ arm_2d_err_t process_args(int argc, char* argv[])
             continue;
         }
 
+        if (0 == strncmp(argv[n], "--footnote_height", 17)) {
+            n++;
+            if (n >= argc) {
+                bInputIsValid = false;
+                break;
+            }
+
+            SYSTEM_CFG.Input.iFootnoteHeight = SDL_atoi(argv[n]);
+            continue;
+        }
+
         if (0 == strncmp(argv[n], "-t", 2)) {
             n++;
             if (n >= argc) {
@@ -164,6 +175,11 @@ arm_2d_err_t process_args(int argc, char* argv[])
 
         if ( 0 == strncmp(argv[n], "--dryrun", 8)) {
             SYSTEM_CFG.Input.bDryRun = true;
+            continue;
+        }
+
+        if ( 0 == strncmp(argv[n], "--hide_default_logo", 19)) {
+            SYSTEM_CFG.Input.bHideDefaultLogo = true;
             continue;
         }
 
@@ -225,6 +241,14 @@ arm_2d_err_t process_args(int argc, char* argv[])
         SYSTEM_CFG.Input.bAutoScaling = true;
     }
 
+    if (SYSTEM_CFG.Input.iFootnoteHeight <= 0) {
+        if (SYSTEM_CFG.Input.bHideDefaultLogo) {
+            SYSTEM_CFG.Input.iFootnoteHeight = 200;
+        } else {
+            SYSTEM_CFG.Input.iFootnoteHeight = 120;
+        }
+    }
+
     return ARM_2D_ERR_NONE;
 }
 
@@ -255,16 +279,19 @@ static void print_help(void)
 {
     printf("The Postcard is a command line tool that generates and prints out a postcard with given input picture and a story text. \r\n");
     printf("\r\noptions:\r\n");
-    printf("\t-h, --help                show this help message and exit\r\n");
-    printf("\t-p <picture path>         Input picture (*.bmp, *.png etc)\r\n");
-    printf("\t-t <text path>            Input text file.\r\n");
-    printf("\t-ratio <scaling ratio>    Font size scaling ratio in floating point, e.g -ratio 0.95. Giving zero will enable an experimental auto-scaling feature. \r\n");
-    printf("\t--A4, --a4                Use A4 papers rather than A5 papers for printing.\r\n");
-    printf("\t--dryrun                  Generate PDF and skip printing.\r\n");
-    printf("\t--no_bg_color             No background colour for the story board.\r\n");
-    printf("\t--oneside                 Use One-Side layout.\r\n");
-    printf("\t--event <Event Name>      The event name string used in postcard title.\r\n");
-    printf("\t--logo <logo path>        The event logo(*.bmp, *.png etc).\r\n");
+    printf("\t-h, --help                    show this help message and exit\r\n");
+    printf("\t-p <picture path>             Input picture (*.bmp, *.png etc)\r\n");
+    printf("\t-t <text path>                Input text file.\r\n");
+    printf("\t-ratio <scaling ratio>        Font size scaling ratio in floating point, e.g -ratio 0.95. Giving zero will enable an experimental auto-scaling feature. \r\n");
+    printf("\t--A4, --a4                    Use A4 papers rather than A5 papers for printing.\r\n");
+    printf("\t--dryrun                      Generate PDF and skip printing.\r\n");
+    printf("\t--no_bg_color                 No background colour for the story board.\r\n");
+    printf("\t--oneside                     Use One-Side layout.\r\n");
+    printf("\t--event <Event Name>          The event name string used in postcard title.\r\n");
+    printf("\t--logo <logo path>            The event logo(*.bmp, *.png etc).\r\n");
+    printf("\t--hide_default_logo           Hide the default Arm logo in the footnote.\r\n");
+    printf("\t--footnote_height <height>    The footnote height. Zero means using the default value 120.\r\n");
+
     printf("\r\n");
 }
 
@@ -464,6 +491,7 @@ int main(int argc, char* argv[])
                                 &SYSTEM_CFG.Logo.tTile,
                                 &SYSTEM_CFG.Logo.tMaskTile)) {
                 printf("WARNING: failed to load logo, %s\n", SDL_GetError());
+                SYSTEM_CFG.Input.pchLogoPath = NULL;
             };
         }
 

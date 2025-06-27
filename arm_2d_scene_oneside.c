@@ -333,49 +333,54 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                     arm_2d_layout(__item_region, BOTTOM_UP) {
 
                         /* draw footnote */
-                        __item_line_dock_vertical(120) {
+                        __item_line_dock_vertical(SYSTEM_CFG.Input.iFootnoteHeight) {
 
                             arm_2d_layout(__item_region, RIGHT_TO_LEFT) {
 
-                                __item_line_dock_horizontal(c_tileArmLogoMask.tRegion.tSize.iWidth) {
+                                if (!SYSTEM_CFG.Input.bHideDefaultLogo) {
+                                    __item_line_dock_horizontal(c_tileArmLogoMask.tRegion.tSize.iWidth, 50, 0, 0, 0) {
 
-                                    arm_2d_align_centre(__item_region, c_tileArmLogoMask.tRegion.tSize) {
-                                        arm_2d_fill_colour_with_mask_and_opacity(
-                                                ptTile,
-                                                &__centre_region,
-                                                &c_tileArmLogoMask,
-                                                (__arm_2d_color_t) {GLCD_COLOR_BLACK},
-                                                255 - 32);
+                                        arm_2d_align_centre(__item_region, c_tileArmLogoMask.tRegion.tSize) {
+                                            arm_2d_fill_colour_with_mask_and_opacity(
+                                                    ptTile,
+                                                    &__centre_region,
+                                                    &c_tileArmLogoMask,
+                                                    (__arm_2d_color_t) {GLCD_COLOR_BLACK},
+                                                    255 - 32);
+                                        }
                                     }
                                 }
 
-                                __item_line_dock_horizontal(0, 50, 0, 0) {
+                                if (NULL != SYSTEM_CFG.Input.pchLogoPath) {
+                                    __item_line_dock_horizontal() {
 
-                                    float fScale = (float)__item_region.tSize.iHeight / (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iHeight;
+                                        float fScale = (float)__item_region.tSize.iHeight 
+                                                     / (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iHeight;
 
-                                    arm_2d_size_t tLogoSize = {
-                                        .iWidth = (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iWidth * fScale + 2,
-                                        .iHeight = __item_region.tSize.iHeight,
-                                    };
-
-                                    arm_2d_dock_right(__item_region, tLogoSize.iWidth) {
-                                        arm_2d_location_t tImageCentre = {
-                                            .iX = SYSTEM_CFG.Logo.tTile.tRegion.tSize.iWidth / 2,
-                                            .iY = SYSTEM_CFG.Logo.tTile.tRegion.tSize.iHeight / 2,
+                                        arm_2d_size_t tLogoSize = {
+                                            .iWidth = (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iWidth * fScale + 2,
+                                            .iHeight = __item_region.tSize.iHeight,
                                         };
 
-                                        arm_2dp_tile_transform_with_src_mask_and_opacity(
-                                            &this.tTransOP[1],
-                                            &SYSTEM_CFG.Logo.tTile,
-                                            &SYSTEM_CFG.Logo.tMaskTile,
-                                            ptTile,
-                                            &__right_region,
-                                            tImageCentre,
-                                            0.0f,
-                                            fScale,
-                                            255);
+                                        arm_2d_dock_right(__item_region, tLogoSize.iWidth) {
+                                            arm_2d_location_t tImageCentre = {
+                                                .iX = SYSTEM_CFG.Logo.tTile.tRegion.tSize.iWidth / 2,
+                                                .iY = SYSTEM_CFG.Logo.tTile.tRegion.tSize.iHeight / 2,
+                                            };
 
-                                        ARM_2D_OP_WAIT_ASYNC(&this.tTransOP[1]);
+                                            arm_2dp_tile_transform_with_src_mask_and_opacity(
+                                                &this.tTransOP[1],
+                                                &SYSTEM_CFG.Logo.tTile,
+                                                &SYSTEM_CFG.Logo.tMaskTile,
+                                                ptTile,
+                                                &__right_region,
+                                                tImageCentre,
+                                                0.0f,
+                                                fScale,
+                                                255);
+
+                                            ARM_2D_OP_WAIT_ASYNC(&this.tTransOP[1]);
+                                        }
                                     }
                                 }
                             }

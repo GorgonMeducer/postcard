@@ -42,7 +42,9 @@ typedef struct system_cfg_t {
         uint8_t bNoBackgroundColour     : 1;
         uint8_t bOneSideMode            : 1;
         uint8_t bAutoScaling            : 1;
+        uint8_t bHideDefaultLogo        : 1;
         float fScale;
+        int16_t iFootnoteHeight;
     } Input;
 
     struct {
