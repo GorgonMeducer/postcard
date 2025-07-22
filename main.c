@@ -148,7 +148,7 @@ arm_2d_err_t process_args(int argc, char* argv[])
             continue;
         }
 
-        if (0 == strncmp(argv[n], "--story_boader_margin", 21)) {
+        if (0 == strncmp(argv[n], "--story_board_margin", 20)) {
             n++;
             if (n >= argc) {
                 bInputIsValid = false;
@@ -330,7 +330,7 @@ static void print_help(void)
     printf("\t--event <Event Name>              The event name string used in postcard title. If you ignore this option, there will be NO title above the story board.\r\n");
     printf("\t--logo <logo path>                The event logo(*.bmp, *.png etc).\r\n");
     printf("\t--hide_default_logo               Hide the default Arm logo in the footnote.\r\n");
-    printf("\t--story_boader_margin <margin>    You can specify the margin inside the story board. When passing a positive value, a gray boarder will be added.\r\n");
+    printf("\t--story_board_margin <margin>     You can specify the margin inside the story board. When passing a positive value, a gray border will be added.\r\n");
     printf("\t--footnote_height <height>        The footnote content height. Zero means using the default value 120.\r\n");
     printf("\t--footnote_box_height <height>    When passing a positive value, the bottom of the page will be assigned to footnote with a given height. The footnote content will be centered vertically.\r\n");
     printf("\t--footnote_align <aligment>       The alignment of the footnote content. Valid values are: left, right, centre and default.\r\n");
