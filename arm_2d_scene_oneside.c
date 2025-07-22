@@ -140,6 +140,13 @@ struct {
     arm_2d_char_idx_t tUTF8Table;
 } ARM_2D_FONT_Chalkboard_A8;
 
+extern
+const
+struct {
+    implement(arm_2d_user_font_t);
+    arm_2d_char_idx_t tUTF8Table;
+} ARM_2D_FONT_Chalkboard32_A8;
+
 /*============================ PROTOTYPES ====================================*/
 /*============================ LOCAL VARIABLES ===============================*/
 /*============================ IMPLEMENTATION ================================*/
@@ -222,9 +229,9 @@ static void __on_scene_oneside_frame_complete(arm_2d_scene_t *ptScene)
                 text_box_set_scale(&this.tStoryBoard, fScale - 0.01f);
             } else {
                 int16_t iDelta = this.iStoryBoxHeight - iStoryHeight;
-                if (iDelta < 150) {
+                if (iDelta < 100) {
                     text_box_set_scale(&this.tStoryBoard, fScale - 0.01f);
-                } else if (iDelta < 300) {
+                } else if (iDelta < 200) {
                     this.bFinishedDrawing = true;
                 } else {
                     text_box_set_scale(&this.tStoryBoard, fScale + 0.01f);
@@ -249,6 +256,139 @@ static void __before_scene_oneside_switching_out(arm_2d_scene_t *ptScene)
 
 }
 
+static void __draw_footnote(user_scene_oneside_t *ptThis, 
+                            const arm_2d_tile_t *ptTile, 
+                            arm_2d_region_t *ptRegion, 
+                            bool bIsNewFrame)
+{
+    assert(NULL != ptThis);
+    assert(NULL != ptTile);
+    assert(NULL != ptRegion);
+
+    __arm_2d_layout_align_tab_t tAlignPolict = ARM_2D_LAYOUT_ALIGN_RIGHT_TO_LEFT_TOP_DOWN;
+    switch (SYSTEM_CFG.Input.u2FootnoteLogoAlign) {
+        default:
+        case FOOTNOTE_ALIGN_DEFAULT:
+        case FOOTNOTE_ALIGN_RIGHT:
+            break;
+        case FOOTNOTE_ALIGN_LEFT:
+            tAlignPolict = ARM_2D_LAYOUT_ALIGN_LEFT_TO_RIGHT_TOP_DOWN;
+            break;
+        case FOOTNOTE_ALIGN_MIDDLE:
+            break;
+    }
+    
+    arm_2d_region_t tFootNoteRegion = *ptRegion;
+    if (SYSTEM_CFG.Input.u2FootnoteLogoAlign == FOOTNOTE_ALIGN_MIDDLE) {
+
+        int16_t iContentWidth = 0;
+        if (NULL != SYSTEM_CFG.Input.pchLogoPath) {
+            
+            int16_t iEventLogoWidthAllowance = ptRegion->tSize.iWidth;
+            if (!SYSTEM_CFG.Input.bHideDefaultLogo) {
+                iEventLogoWidthAllowance -= c_tileArmLogoMask.tRegion.tSize.iWidth;
+                iContentWidth += c_tileArmLogoMask.tRegion.tSize.iWidth + 50;
+            }
+
+            float fScale = (float)ptRegion->tSize.iHeight 
+                            / (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iHeight;
+
+            arm_2d_size_t tLogoSize = {
+                .iWidth = (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iWidth * fScale + 2,
+                .iHeight = ptRegion->tSize.iHeight,
+            };
+
+            if (tLogoSize.iWidth > iEventLogoWidthAllowance) {
+                /* recalculate*/
+
+                fScale = (float)iEventLogoWidthAllowance 
+                        / (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iWidth;
+
+                tLogoSize.iWidth = iEventLogoWidthAllowance;
+                tLogoSize.iHeight = (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iHeight * fScale;
+
+            }
+
+            iContentWidth += tLogoSize.iWidth;
+        } else if (!SYSTEM_CFG.Input.bHideDefaultLogo) {
+            iContentWidth = c_tileArmLogoMask.tRegion.tSize.iWidth;
+        }
+
+        arm_2d_dock_horizontal_open(*ptRegion, iContentWidth) {
+            tFootNoteRegion = __horizontal_region;
+        }
+    }
+
+
+    arm_2d_layout_with_align_mode(tFootNoteRegion, tAlignPolict) {
+
+        if (!SYSTEM_CFG.Input.bHideDefaultLogo) {
+            __item_line_dock_horizontal(c_tileArmLogoMask.tRegion.tSize.iWidth) {
+
+                arm_2d_align_centre(__item_region, c_tileArmLogoMask.tRegion.tSize) {
+                    arm_2d_fill_colour_with_mask_and_opacity(
+                            ptTile,
+                            &__centre_region,
+                            &c_tileArmLogoMask,
+                            (__arm_2d_color_t) {GLCD_COLOR_BLACK},
+                            255 - 32);
+                }
+            }
+            /* padding */
+            __item_line_dock_horizontal(50) {
+            }
+        }
+
+        if (NULL != SYSTEM_CFG.Input.pchLogoPath) {
+            __item_line_dock_horizontal() {
+
+                float fScale = (float)__item_region.tSize.iHeight 
+                            / (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iHeight;
+
+                arm_2d_size_t tLogoSize = {
+                    .iWidth = (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iWidth * fScale + 2,
+                    .iHeight = __item_region.tSize.iHeight,
+                };
+
+                if (tLogoSize.iWidth > __item_region.tSize.iWidth) {
+                    /* recalculate*/
+
+                    fScale = (float)__item_region.tSize.iWidth 
+                            / (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iWidth;
+
+                    tLogoSize.iWidth = __item_region.tSize.iWidth;
+                    tLogoSize.iHeight = (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iHeight * fScale;
+
+                }
+
+                arm_2d_layout_with_align_mode(__item_region, tAlignPolict) {
+
+                    __item_line_dock_horizontal(tLogoSize.iWidth) {
+                        arm_2d_location_t tImageCentre = {
+                            .iX = SYSTEM_CFG.Logo.tTile.tRegion.tSize.iWidth / 2,
+                            .iY = SYSTEM_CFG.Logo.tTile.tRegion.tSize.iHeight / 2,
+                        };
+
+                        arm_2dp_tile_transform_with_src_mask_and_opacity(
+                            &this.tTransOP[1],
+                            &SYSTEM_CFG.Logo.tTile,
+                            &SYSTEM_CFG.Logo.tMaskTile,
+                            ptTile,
+                            &__item_region,
+                            tImageCentre,
+                            0.0f,
+                            fScale,
+                            255);
+
+                        ARM_2D_OP_WAIT_ASYNC(&this.tTransOP[1]);
+                    }
+                }
+            }
+        }
+    }
+         
+}
+
 static
 IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
 {
@@ -263,187 +403,163 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
 
     arm_2d_canvas(ptTile, __top_canvas) {
 
-        arm_2d_dock(__top_canvas, 120, 120, 100, 100) {
 
-            arm_2d_layout(__dock_region) {
-                
-                __item_line_dock_vertical(1024) {
+        arm_2d_layout(__top_canvas, BOTTOM_UP) {
+            if (SYSTEM_CFG.Input.iFootnoteBoxHeight > 0) {
+                __item_line_dock_vertical(SYSTEM_CFG.Input.iFootnoteBoxHeight) {
 
-
-                    arm_2d_location_t tImageCentre = {
-                        .iX = SYSTEM_CFG.Picture.tTile.tRegion.tSize.iWidth / 2,
-                        .iY = SYSTEM_CFG.Picture.tTile.tRegion.tSize.iHeight / 2,
-                    };
-
-                    float fScaleW = (float)__item_region.tSize.iWidth / (float)SYSTEM_CFG.Picture.tTile.tRegion.tSize.iWidth;
-                    float fScaleH = (float)__item_region.tSize.iHeight / (float)SYSTEM_CFG.Picture.tTile.tRegion.tSize.iHeight;
-                    float fScale = MIN(fScaleW, fScaleH);
-
-                    arm_2dp_tile_transform_with_src_mask_and_opacity(
-                        &this.tTransOP[0],
-                        &SYSTEM_CFG.Picture.tTile,
-                        &SYSTEM_CFG.Picture.tMaskTile,
-                        ptTile,
-                        &__item_region,
-                        tImageCentre,
-                        0.0f,
-                        fScale,
-                        255);
-                    ARM_2D_OP_WAIT_ASYNC(&this.tTransOP[0]);
-                }
-
-                __item_line_dock_vertical(46, 0, 0, 50, 0) {
-                    arm_lcd_text_set_target_framebuffer(ptTile);
-                    
-                    arm_lcd_text_set_draw_region(&__item_region);
-                    arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
-                    arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_CalibriBold46_A8);
-                    //arm_lcd_text_set_scale(1.1f);
-
-                    time_t now;
-                    time(&now);
-                    struct tm *ptTimeinfo = localtime(&now);
-                    static const char *c_chMonths[] = {
-                        "January",
-                        "February",
-                        "March",
-                        "April",
-                        "May",
-                        "June",
-                        "July",
-                        "August",
-                        "September",
-                        "October",
-                        "November",
-                        "December"
-                    };
-                    
-                    arm_lcd_printf_label(ARM_2D_ALIGN_MIDDLE_LEFT, 
-                                        "%d %s %04d, %s",
-                                        ptTimeinfo->tm_mday,
-                                        c_chMonths[ptTimeinfo->tm_mon],
-                                        ptTimeinfo->tm_year + 1900,
-                                        SYSTEM_CFG.Input.pchEventName
-                                        );
-                    //arm_lcd_text_set_scale(1.0f);
-                }
-
-                __item_line_dock_vertical() {
-
-                    arm_2d_layout(__item_region, BOTTOM_UP) {
-
-                        /* draw footnote */
-                        __item_line_dock_vertical(SYSTEM_CFG.Input.iFootnoteHeight) {
-
-                            arm_2d_layout(__item_region, RIGHT_TO_LEFT) {
-
-                                if (!SYSTEM_CFG.Input.bHideDefaultLogo) {
-                                    __item_line_dock_horizontal(c_tileArmLogoMask.tRegion.tSize.iWidth, 50, 0, 0, 0) {
-
-                                        arm_2d_align_centre(__item_region, c_tileArmLogoMask.tRegion.tSize) {
-                                            arm_2d_fill_colour_with_mask_and_opacity(
-                                                    ptTile,
-                                                    &__centre_region,
-                                                    &c_tileArmLogoMask,
-                                                    (__arm_2d_color_t) {GLCD_COLOR_BLACK},
-                                                    255 - 32);
-                                        }
-                                    }
-                                }
-
-                                if (NULL != SYSTEM_CFG.Input.pchLogoPath) {
-                                    __item_line_dock_horizontal() {
-
-                                        float fScale = (float)__item_region.tSize.iHeight 
-                                                     / (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iHeight;
-
-                                        arm_2d_size_t tLogoSize = {
-                                            .iWidth = (float)SYSTEM_CFG.Logo.tTile.tRegion.tSize.iWidth * fScale + 2,
-                                            .iHeight = __item_region.tSize.iHeight,
-                                        };
-
-                                        arm_2d_dock_right(__item_region, tLogoSize.iWidth) {
-                                            arm_2d_location_t tImageCentre = {
-                                                .iX = SYSTEM_CFG.Logo.tTile.tRegion.tSize.iWidth / 2,
-                                                .iY = SYSTEM_CFG.Logo.tTile.tRegion.tSize.iHeight / 2,
-                                            };
-
-                                            arm_2dp_tile_transform_with_src_mask_and_opacity(
-                                                &this.tTransOP[1],
-                                                &SYSTEM_CFG.Logo.tTile,
-                                                &SYSTEM_CFG.Logo.tMaskTile,
-                                                ptTile,
-                                                &__right_region,
-                                                tImageCentre,
-                                                0.0f,
-                                                fScale,
-                                                255);
-
-                                            ARM_2D_OP_WAIT_ASYNC(&this.tTransOP[1]);
-                                        }
-                                    }
-                                }
-                            }
-
-                        #if 0
-                            arm_2d_dock_left( __item_region, (__item_region.tSize.iWidth / 2) - 100) {
-
-                                arm_lcd_text_set_draw_region(&__left_region);
-                                arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_Calibri_A8);
-                                
-                                arm_lcd_printf("The above story was generated based on the image on the reverse of");
-                                arm_lcd_printf("this card. AI models running solely on a Raspberry Pi 5 ");
-                                arm_lcd_printf("were used to detect objects in the camera view and develop a narrative, utilizing\n");
-                                arm_lcd_printf("Arm Technologies. \n\n");
-
-                                arm_lcd_printf("This content was generated by artificial intelligence. It may contain\n");
-                                arm_lcd_printf("errors or inaccuracies.");
-                                arm_lcd_text_set_scale(1.00f);
-                            }
-
-                            arm_2d_dock_horizontal(__item_region, 4) {
-
-                                arm_2d_fill_colour_with_opacity(ptTile, 
-                                                                &__horizontal_region, 
-                                                                (__arm_2d_color_t) {GLCD_COLOR_BLACK},
-                                                                255-32);
-                            }
-                        #endif
+                    arm_2d_layout(__item_region) {
+                        __item_line_dock_vertical(30) {
+                            arm_2d_fill_colour_with_vertical_alpha_gradient(
+                                ptTile,
+                                &__item_region, 
+                                (__arm_2d_color_t){GLCD_COLOR_BLACK}, 
+                                (arm_2d_alpha_samples_2pts_t){0, 64});
                         }
 
-                        /* draw story */
-                        __item_line_dock_vertical() {
-                        
-                            if (!SYSTEM_CFG.Input.bNoBackgroundColour) {
-                                arm_2d_fill_colour_with_vertical_alpha_gradient_and_opacity(
-                                    ptTile, 
-                                    &__item_region, 
-                                    (__arm_2d_color_t){__RGB(00, 0x8f, 0xbe)}, 
-                                    128, 
-                                    (arm_2d_alpha_samples_2pts_t){
-                                        {128, 0}
-                                    });
+                        __item_line_dock_vertical(120, 120, 0, 0) {
+                            arm_2d_dock_vertical(__item_region, SYSTEM_CFG.Input.iFootnoteHeight) {
+                                __draw_footnote(ptThis, ptTile, &__vertical_region, bIsNewFrame);
+                            }
+                        }
+                    }
+                }
+            }
+
+            __item_line_dock_vertical(120, 120, 100, 100) {
+
+                arm_2d_layout(__item_region) {
+                    
+                    __item_line_dock_vertical(1024) {
+
+
+                        arm_2d_location_t tImageCentre = {
+                            .iX = SYSTEM_CFG.Picture.tTile.tRegion.tSize.iWidth / 2,
+                            .iY = SYSTEM_CFG.Picture.tTile.tRegion.tSize.iHeight / 2,
+                        };
+
+                        float fScaleW = (float)__item_region.tSize.iWidth / (float)SYSTEM_CFG.Picture.tTile.tRegion.tSize.iWidth;
+                        float fScaleH = (float)__item_region.tSize.iHeight / (float)SYSTEM_CFG.Picture.tTile.tRegion.tSize.iHeight;
+                        float fScale = MIN(fScaleW, fScaleH);
+
+                        arm_2dp_tile_transform_with_src_mask_and_opacity(
+                            &this.tTransOP[0],
+                            &SYSTEM_CFG.Picture.tTile,
+                            &SYSTEM_CFG.Picture.tMaskTile,
+                            ptTile,
+                            &__item_region,
+                            tImageCentre,
+                            0.0f,
+                            fScale,
+                            255);
+                        ARM_2D_OP_WAIT_ASYNC(&this.tTransOP[0]);
+                    }
+
+                    if (SYSTEM_CFG.Input.pchEventName != NULL) {
+                        __item_line_dock_vertical(46, 0, 0, 50, 0) {
+                            arm_lcd_text_set_target_framebuffer(ptTile);
+                            
+                            arm_lcd_text_set_draw_region(&__item_region);
+                            arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
+                            arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_CalibriBold46_A8);
+                            //arm_lcd_text_set_scale(1.1f);
+
+                            time_t now;
+                            time(&now);
+                            struct tm *ptTimeinfo = localtime(&now);
+                            static const char *c_chMonths[] = {
+                                "January",
+                                "February",
+                                "March",
+                                "April",
+                                "May",
+                                "June",
+                                "July",
+                                "August",
+                                "September",
+                                "October",
+                                "November",
+                                "December"
+                            };
+                            
+                            arm_lcd_printf_label(ARM_2D_ALIGN_MIDDLE_LEFT, 
+                                                "%d %s %04d, %s",
+                                                ptTimeinfo->tm_mday,
+                                                c_chMonths[ptTimeinfo->tm_mon],
+                                                ptTimeinfo->tm_year + 1900,
+                                                SYSTEM_CFG.Input.pchEventName
+                                                );
+                            //arm_lcd_text_set_scale(1.0f);
+                        }
+                    } else {
+                        __item_line_dock_vertical(70) {}
+                    }
+
+                    __item_line_dock_vertical() {
+
+                        arm_2d_layout(__item_region, BOTTOM_UP) {
+
+                            if (SYSTEM_CFG.Input.iFootnoteBoxHeight <=0) {
+                                /* draw footnote */
+
+                                __item_line_dock_vertical(SYSTEM_CFG.Input.iFootnoteHeight) {
+                                    __draw_footnote(ptThis, ptTile, &__item_region, bIsNewFrame);
+                                }
                             }
 
-                            arm_2d_dock(__item_region, 0,0, 20, 0) {
-
-                                if (bIsNewFrame) {
-                                    this.iStoryBoxHeight = __dock_region.tSize.iHeight;
+                            /* draw story */
+                            __item_line_dock_vertical(0, 0, 10, 20) {
+                            
+                                if (!SYSTEM_CFG.Input.bNoBackgroundColour) {
+                                    arm_2d_fill_colour_with_vertical_alpha_gradient_and_opacity(
+                                        ptTile, 
+                                        &__item_region, 
+                                        (__arm_2d_color_t){__RGB(00, 0x8f, 0xbe)}, 
+                                        128, 
+                                        (arm_2d_alpha_samples_2pts_t){
+                                            {128, 0}
+                                        });
                                 }
 
-                                text_box_show(  &this.tStoryBoard, 
-                                                ptTile, 
-                                                &__dock_region,
-                                                (__arm_2d_color_t) {GLCD_COLOR_BLACK},
-                                                255,
-                                                bIsNewFrame);
+                                if (SYSTEM_CFG.Input.iStoryBoardMargin > 0) {
+                                    arm_2d_helper_draw_box(ptTile, &__item_region, 4, GLCD_COLOR_BLACK, 64);
+
+                                    arm_2d_dock(__item_region, SYSTEM_CFG.Input.iStoryBoardMargin) {
+
+                                        if (bIsNewFrame) {
+                                            this.iStoryBoxHeight = __dock_region.tSize.iHeight;
+                                        }
+
+                                        text_box_show(  &this.tStoryBoard, 
+                                                        ptTile, 
+                                                        &__dock_region,
+                                                        (__arm_2d_color_t) {GLCD_COLOR_BLACK},
+                                                        255,
+                                                        bIsNewFrame);
+                                    }
+                                } else {
+                                    arm_2d_dock(__item_region, 0, 0, 10, 0) {
+
+                                        if (bIsNewFrame) {
+                                            this.iStoryBoxHeight = __dock_region.tSize.iHeight;
+                                        }
+
+                                        text_box_show(  &this.tStoryBoard, 
+                                                        ptTile, 
+                                                        &__dock_region,
+                                                        (__arm_2d_color_t) {GLCD_COLOR_BLACK},
+                                                        255,
+                                                        bIsNewFrame);
+                                    }
+                                }
+
                             }
 
                         }
 
                     }
-
                 }
+
             }
 
         }
@@ -512,7 +628,7 @@ user_scene_oneside_t *__arm_2d_scene_oneside_init(   arm_2d_scene_player_t *ptDi
                                     SYSTEM_CFG.Story.tSize);
 
         text_box_cfg_t tCFG = {
-            .ptFont = (arm_2d_font_t *)&ARM_2D_FONT_Chalkboard_A8,
+            .ptFont = (arm_2d_font_t *)&ARM_2D_FONT_Chalkboard32_A8,
             .tStreamIO = {
                 .ptIO       = &TEXT_BOX_IO_C_STRING_READER,
                 .pTarget    = (uintptr_t)&this.tCStringReader,

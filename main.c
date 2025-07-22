@@ -63,8 +63,6 @@ system_cfg_t SYSTEM_CFG = {
         .chBackFileName = {"back_XXXXXXXX"},
         .chCombinedFileName = {"combined_XXXXXXXX"},
     },
-
-    .Input.pchEventName = "Arm GenAI Photo-booth"
 };
 
 /*============================ PROTOTYPES ====================================*/
@@ -147,6 +145,48 @@ arm_2d_err_t process_args(int argc, char* argv[])
             }
 
             SYSTEM_CFG.Input.iFootnoteHeight = SDL_atoi(argv[n]);
+            continue;
+        }
+
+        if (0 == strncmp(argv[n], "--story_boader_margin", 21)) {
+            n++;
+            if (n >= argc) {
+                bInputIsValid = false;
+                break;
+            }
+
+            SYSTEM_CFG.Input.iStoryBoardMargin = SDL_atoi(argv[n]);
+            continue;
+        }
+
+        if (0 == strncmp(argv[n], "--footnote_box_height", 21)) {
+            n++;
+            if (n >= argc) {
+                bInputIsValid = false;
+                break;
+            }
+
+            SYSTEM_CFG.Input.iFootnoteBoxHeight = SDL_atoi(argv[n]);
+            continue;
+        }
+
+        if (0 == strncmp(argv[n], "--footnote_align", 16)) {
+            n++;
+            if (n >= argc) {
+                bInputIsValid = false;
+                break;
+            }
+
+            if ((0 == strncmp(argv[n], "left", 4)) || (0 == strncmp(argv[n], "LEFT", 4))) {
+                SYSTEM_CFG.Input.u2FootnoteLogoAlign = FOOTNOTE_ALIGN_LEFT;
+            } else if ((0 == strncmp(argv[n], "right", 4)) || (0 == strncmp(argv[n], "RIGHT", 4))) {
+                SYSTEM_CFG.Input.u2FootnoteLogoAlign = FOOTNOTE_ALIGN_RIGHT;
+            } else if ((0 == strncmp(argv[n], "centre", 4)) || (0 == strncmp(argv[n], "CENTRE", 4))) {
+                SYSTEM_CFG.Input.u2FootnoteLogoAlign = FOOTNOTE_ALIGN_MIDDLE;
+            } else {
+                SYSTEM_CFG.Input.u2FootnoteLogoAlign = FOOTNOTE_ALIGN_DEFAULT;
+            }
+
             continue;
         }
 
@@ -279,18 +319,21 @@ static void print_help(void)
 {
     printf("The Postcard is a command line tool that generates and prints out a postcard with given input picture and a story text. \r\n");
     printf("\r\noptions:\r\n");
-    printf("\t-h, --help                    show this help message and exit\r\n");
-    printf("\t-p <picture path>             Input picture (*.bmp, *.png etc)\r\n");
-    printf("\t-t <text path>                Input text file.\r\n");
-    printf("\t-ratio <scaling ratio>        Font size scaling ratio in floating point, e.g -ratio 0.95. Giving zero will enable an experimental auto-scaling feature. \r\n");
-    printf("\t--A4, --a4                    Use A4 papers rather than A5 papers for printing.\r\n");
-    printf("\t--dryrun                      Generate PDF and skip printing.\r\n");
-    printf("\t--no_bg_color                 No background colour for the story board.\r\n");
-    printf("\t--oneside                     Use One-Side layout.\r\n");
-    printf("\t--event <Event Name>          The event name string used in postcard title.\r\n");
-    printf("\t--logo <logo path>            The event logo(*.bmp, *.png etc).\r\n");
-    printf("\t--hide_default_logo           Hide the default Arm logo in the footnote.\r\n");
-    printf("\t--footnote_height <height>    The footnote height. Zero means using the default value 120.\r\n");
+    printf("\t-h, --help                        show this help message and exit\r\n");
+    printf("\t-p <picture path>                 Input picture (*.bmp, *.png etc)\r\n");
+    printf("\t-t <text path>                    Input text file.\r\n");
+    printf("\t-ratio <scaling ratio>            Font size scaling ratio in floating point, e.g -ratio 0.95. Giving zero will enable an experimental auto-scaling feature. \r\n");
+    printf("\t--A4, --a4                        Use A4 papers rather than A5 papers for printing.\r\n");
+    printf("\t--dryrun                          Generate PDF and skip printing.\r\n");
+    printf("\t--no_bg_color                     No background colour for the story board.\r\n");
+    printf("\t--oneside                         Use One-Side layout.\r\n");
+    printf("\t--event <Event Name>              The event name string used in postcard title. If you ignore this option, there will be NO title above the story board.\r\n");
+    printf("\t--logo <logo path>                The event logo(*.bmp, *.png etc).\r\n");
+    printf("\t--hide_default_logo               Hide the default Arm logo in the footnote.\r\n");
+    printf("\t--story_boader_margin <margin>    You can specify the margin inside the story board. When passing a positive value, a gray boarder will be added.\r\n");
+    printf("\t--footnote_height <height>        The footnote content height. Zero means using the default value 120.\r\n");
+    printf("\t--footnote_box_height <height>    When passing a positive value, the bottom of the page will be assigned to footnote with a given height. The footnote content will be centered vertically.\r\n");
+    printf("\t--footnote_align <aligment>       The alignment of the footnote content. Valid values are: left, right, centre and default.\r\n");
 
     printf("\r\n");
 }

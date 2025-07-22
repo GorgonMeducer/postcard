@@ -30,21 +30,35 @@ extern "C" {
 /*============================ MACROS ========================================*/
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*============================ TYPES =========================================*/
+
+enum {
+    FOOTNOTE_ALIGN_DEFAULT = 0,
+    FOOTNOTE_ALIGN_RIGHT,
+    FOOTNOTE_ALIGN_LEFT,
+    FOOTNOTE_ALIGN_MIDDLE
+};
+
 typedef struct system_cfg_t {
     struct {
         char *pchInputPicturePath;
         char *pchLogoPath;
         char *pchStoryPath;
         char *pchEventName;
-        uint8_t bUseA4                  : 1;
-        uint8_t bValid                  : 1;
-        uint8_t bDryRun                 : 1;
-        uint8_t bNoBackgroundColour     : 1;
-        uint8_t bOneSideMode            : 1;
-        uint8_t bAutoScaling            : 1;
-        uint8_t bHideDefaultLogo        : 1;
+        uint16_t bUseA4                 : 1;
+        uint16_t bValid                 : 1;
+        uint16_t bDryRun                : 1;
+        uint16_t bNoBackgroundColour    : 1;
+        uint16_t bOneSideMode           : 1;
+        uint16_t bAutoScaling           : 1;
+        uint16_t bHideDefaultLogo       : 1;
+        uint16_t                        : 1;
+        uint16_t u2FootnoteLogoAlign    : 2;
+        uint16_t                        : 6;
+        
         float fScale;
         int16_t iFootnoteHeight;
+        int16_t iStoryBoardMargin;
+        int16_t iFootnoteBoxHeight;
     } Input;
 
     struct {
