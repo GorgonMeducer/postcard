@@ -636,6 +636,7 @@ user_scene_oneside_t *__arm_2d_scene_oneside_init(   arm_2d_scene_player_t *ptDi
             .u2LineAlign = TEXT_BOX_LINE_ALIGN_JUSTIFIED,
             .fScale = 0.85f * SYSTEM_CFG.Input.fScale,
             .chSpaceBetweenParagraph = 10,
+            .tMargin = {5, 0, 0, 0},
 
             .ptScene = (arm_2d_scene_t *)ptThis,
         };
