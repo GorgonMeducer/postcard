@@ -628,7 +628,7 @@ user_scene_oneside_t *__arm_2d_scene_oneside_init(   arm_2d_scene_player_t *ptDi
                                     SYSTEM_CFG.Story.tSize);
 
         text_box_cfg_t tCFG = {
-            .ptFont = (arm_2d_font_t *)&ARM_2D_FONT_Chalkboard32_A8,
+            .ptFont = (arm_2d_font_t *)&ARM_2D_FONT_Chalkboard_A8,
             .tStreamIO = {
                 .ptIO       = &TEXT_BOX_IO_C_STRING_READER,
                 .pTarget    = (uintptr_t)&this.tCStringReader,
