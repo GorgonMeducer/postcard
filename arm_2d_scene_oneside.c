@@ -462,7 +462,7 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                             arm_lcd_text_set_draw_region(&__item_region);
                             arm_lcd_text_set_colour(GLCD_COLOR_BLACK, GLCD_COLOR_WHITE);
                             arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_CalibriBold46_A8);
-                            //arm_lcd_text_set_scale(1.1f);
+                            arm_lcd_text_set_scale(0);
 
                             time_t now;
                             time(&now);
@@ -489,7 +489,6 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                                                 ptTimeinfo->tm_year + 1900,
                                                 SYSTEM_CFG.Input.pchEventName
                                                 );
-                            //arm_lcd_text_set_scale(1.0f);
                         }
                     } else {
                         __item_line_dock_vertical(70) {}

@@ -73,9 +73,9 @@ CCFLAG  +=  -ffunction-sections -fdata-sections
 CCFLAG  +=  -fno-ms-extensions
 CCFLAG  +=  -Wno-macro-redefined
 
-CCFLAG  += 	-O0
-#CCFLAG  +=  -flto
-#LDFLAG  +=  -flto
+CCFLAG  += 	-Ofast
+CCFLAG  +=  -flto
+LDFLAG  +=  -flto
 LDFLAG  +=  -lpthread
 
 #======================================================================================================================#
