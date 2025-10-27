@@ -35,4 +35,12 @@
 
 #define RTE_Acceleration_Arm_2D_Demos_User_Defined_OPCODE
 
+#define RTE_Acceleration_Arm_2D_Extra_Loader
+
+#define RTE_Acceleration_Arm_2D_Extra_JPEG_Loader
+
+#define RTE_Acceleration_Arm_2D_Extra_TJpgDec_Loader
+
+#define RTE_Acceleration_Arm_2D_Extra_ZJpgDec_Loader
+
 #endif /* RTE_COMPONENTS_H */

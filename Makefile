@@ -9,6 +9,27 @@ CC_SRC  += $(wildcard Arm-2D/examples/common/asset/*.c)
 CC_SRC  += $(wildcard Arm-2D/examples/common/benchmark/*.c)
 CC_SRC  += $(wildcard Arm-2D/examples/common/controls/*.c)
 
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/*.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/tjpgd_loader/*.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/tjpgd_loader/tjpgd/*.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/zjpgd_loader/*.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/zjpgd_loader/zjpgd/*.c)
+
+# customized freetype #
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/freetype_loader/*.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/freetype_loader/freetype/src/base/ftsystem.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/freetype_loader/freetype/src/base/ftinit.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/freetype_loader/freetype/src/base/ftbase.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/freetype_loader/freetype/src/base/ftdebug.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/freetype_loader/freetype/src/base/ftbitmap.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/freetype_loader/freetype/src/base/ftglyph.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/freetype_loader/freetype/src/sfnt/sfnt.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/freetype_loader/freetype/src/truetype/truetype.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/freetype_loader/freetype/src/smooth/smooth.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/freetype_loader/freetype/src/autofit/autofit.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/freetype_loader/freetype/src/cff/cff.c)
+CC_SRC  += $(wildcard Arm-2D/examples/common/loader/freetype_loader/freetype/src/psaux/psaux.c)
+
 CC_INC  := .
 CC_INC  += platform
 CC_INC  += platform/math
@@ -17,6 +38,12 @@ CC_INC  += Arm-2D/Library/Include
 CC_INC  += Arm-2D/Helper/Include
 CC_INC  += Arm-2D/examples/common/benchmark
 CC_INC  += Arm-2D/examples/common/controls
+
+CC_INC  += ARM-2D/examples/common/loader
+CC_INC  += ARM-2D/examples/common/loader/tjpgd_loader
+CC_INC  += ARM-2D/examples/common/loader/zjpgd_loader
+CC_INC  += ARM-2D/examples/common/loader/freetype_loader
+CC_INC  += ARM-2D/examples/common/loader/freetype_loader/freetype/include
 
 CC_DEF  := ARM_SECTION\(x\)=
 CC_DEF  += __va_list=va_list
