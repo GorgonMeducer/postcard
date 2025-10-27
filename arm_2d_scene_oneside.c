@@ -530,6 +530,8 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                                             this.iStoryBoxHeight = __dock_region.tSize.iHeight;
                                         }
 
+                                        arm_lcd_text_set_line_spacing(10);
+
                                         text_box_show(  &this.tStoryBoard, 
                                                         ptTile, 
                                                         &__dock_region,
@@ -543,6 +545,8 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                                         if (bIsNewFrame) {
                                             this.iStoryBoxHeight = __dock_region.tSize.iHeight;
                                         }
+
+                                        arm_lcd_text_set_line_spacing(10);
 
                                         text_box_show(  &this.tStoryBoard, 
                                                         ptTile, 
@@ -621,28 +625,35 @@ user_scene_oneside_t *__arm_2d_scene_oneside_init(   arm_2d_scene_player_t *ptDi
     };
 
     /* initialize freetype */
-    do {
+    if (NULL != SYSTEM_CFG.Input.pchFontPath) {
         arm_freetype_loader_file_io_init(&this.tFreeTypeFont, 
-                                         "resources/Noto Sans CJK Regular.otf",
+                                         SYSTEM_CFG.Input.pchFontPath, //"resources/Noto Sans CJK Regular.otf",
                                          0, 
                                          32);
-    } while(0);
+    }
 
     /* ------------   initialize members of user_scene_oneside_t begin ---------------*/
     /* initialize textbox */
     do {
+        arm_2d_font_t *ptFont = (arm_2d_font_t *)&ARM_2D_FONT_Chalkboard32_A8;
+        if (    NULL != SYSTEM_CFG.Input.pchFontPath 
+            &&  ARM_2D_ERR_NONE == arm_freetype_get_error(&this.tFreeTypeFont)) {
+            ptFont = &this.tFreeTypeFont.use_as__arm_2d_font_t;
+        }
+
         text_box_c_str_reader_init( &this.tCStringReader,
                                     SYSTEM_CFG.Story.pchStory,
                                     SYSTEM_CFG.Story.tSize);
 
         text_box_cfg_t tCFG = {
-            .ptFont = &this.tFreeTypeFont.use_as__arm_2d_font_t, //(arm_2d_font_t *)&ARM_2D_FONT_Chalkboard32_A8,
+            .ptFont = ptFont, 
             .tStreamIO = {
                 .ptIO       = &TEXT_BOX_IO_C_STRING_READER,
                 .pTarget    = (uintptr_t)&this.tCStringReader,
             },
             .u2LineAlign = TEXT_BOX_LINE_ALIGN_JUSTIFIED,
             .fScale = 0.85f * SYSTEM_CFG.Input.fScale,
+
             .chSpaceBetweenParagraph = 10,
             .tMargin = {5, 0, 0, 0},
 

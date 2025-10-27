@@ -44,6 +44,7 @@ typedef struct system_cfg_t {
         char *pchLogoPath;
         char *pchStoryPath;
         char *pchEventName;
+        char *pchFontPath;
         uint16_t bUseA4                 : 1;
         uint16_t bValid                 : 1;
         uint16_t bDryRun                : 1;

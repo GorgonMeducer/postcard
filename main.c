@@ -207,6 +207,23 @@ arm_2d_err_t process_args(int argc, char* argv[])
             continue;
         }
 
+        if (0 == strncmp(argv[n], "-f", 2)) {
+            n++;
+            if (n >= argc) {
+                bInputIsValid = false;
+                break;
+            }
+
+            if (!file_exists(argv[n], "r")) {
+                printf("ERROR: Cannot find the font file \"%s\".", argv[n]);
+                bInputIsValid = false;
+                break;
+            }
+
+            SYSTEM_CFG.Input.pchFontPath = argv[n];
+            continue;
+        }
+
         if (    (0 == strncmp(argv[n], "--A4", 4)) 
             ||  (0 == strncmp(argv[n], "--a4", 4))) {
             SYSTEM_CFG.Input.bUseA4 = true;
@@ -322,6 +339,7 @@ static void print_help(void)
     printf("\t-h, --help                        show this help message and exit\r\n");
     printf("\t-p <picture path>                 Input picture (*.bmp, *.png etc)\r\n");
     printf("\t-t <text path>                    Input text file.\r\n");
+    printf("\t-f <font path>                    User specified font path (*.ttf | *.otf | *.cff).\r\n");
     printf("\t-ratio <scaling ratio>            Font size scaling ratio in floating point, e.g -ratio 0.95. Giving zero will enable an experimental auto-scaling feature. \r\n");
     printf("\t--A4, --a4                        Use A4 papers rather than A5 papers for printing.\r\n");
     printf("\t--dryrun                          Generate PDF and skip printing.\r\n");

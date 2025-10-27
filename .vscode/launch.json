@@ -9,6 +9,7 @@
             "args": [
                 "-p", "test/photo.bmp", //"test/monika.png", 
                 "-t", "test/story_cjk.txt",
+                "-f", "resources/Noto Sans CJK Regular.otf",
                 "--no_bg_color",
                 //"-ratio","0",
                 "--dryrun",
