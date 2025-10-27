@@ -8,7 +8,7 @@
             "program": "${workspaceFolder}/build/postcard",
             "args": [
                 "-p", "test/photo.bmp", //"test/monika.png", 
-                "-t", "test/story.txt",
+                "-t", "test/story_cjk.txt",
                 "--no_bg_color",
                 //"-ratio","0",
                 "--dryrun",

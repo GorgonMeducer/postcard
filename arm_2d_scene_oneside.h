@@ -29,6 +29,7 @@
 
 #include "arm_2d_helper.h"
 #include "arm_2d_example_controls.h"
+#include "arm_2d_example_loaders.h"
 
 #ifdef   __cplusplus
 extern "C" {
@@ -92,6 +93,8 @@ ARM_PRIVATE(
 
     text_box_t tStoryBoard;
     text_box_c_str_reader_t tCStringReader;
+
+    arm_freetype_loader_t tFreeTypeFont;
 )
     /* place your public member here */
     

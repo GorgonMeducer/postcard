@@ -171,6 +171,7 @@ static void __on_scene_oneside_depose(arm_2d_scene_t *ptScene)
     user_scene_oneside_t *ptThis = (user_scene_oneside_t *)ptScene;
     ARM_2D_UNUSED(ptThis);
     
+    arm_freetype_loader_depose(&this.tFreeTypeFont);
     text_box_depose(&this.tStoryBoard);
 
     ARM_2D_OP_DEPOSE(this.tTransOP[0]);
@@ -619,6 +620,14 @@ user_scene_oneside_t *__arm_2d_scene_oneside_init(   arm_2d_scene_player_t *ptDi
         .bUserAllocated = bUserAllocated,
     };
 
+    /* initialize freetype */
+    do {
+        arm_freetype_loader_file_io_init(&this.tFreeTypeFont, 
+                                         "resources/Noto Sans CJK Regular.otf",
+                                         0, 
+                                         32);
+    } while(0);
+
     /* ------------   initialize members of user_scene_oneside_t begin ---------------*/
     /* initialize textbox */
     do {
@@ -627,7 +636,7 @@ user_scene_oneside_t *__arm_2d_scene_oneside_init(   arm_2d_scene_player_t *ptDi
                                     SYSTEM_CFG.Story.tSize);
 
         text_box_cfg_t tCFG = {
-            .ptFont = (arm_2d_font_t *)&ARM_2D_FONT_Chalkboard32_A8,
+            .ptFont = &this.tFreeTypeFont.use_as__arm_2d_font_t, //(arm_2d_font_t *)&ARM_2D_FONT_Chalkboard32_A8,
             .tStreamIO = {
                 .ptIO       = &TEXT_BOX_IO_C_STRING_READER,
                 .pTarget    = (uintptr_t)&this.tCStringReader,
