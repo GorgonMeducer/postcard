@@ -39,11 +39,11 @@ CC_INC  += Arm-2D/Helper/Include
 CC_INC  += Arm-2D/examples/common/benchmark
 CC_INC  += Arm-2D/examples/common/controls
 
-CC_INC  += ARM-2D/examples/common/loader
-CC_INC  += ARM-2D/examples/common/loader/tjpgd_loader
-CC_INC  += ARM-2D/examples/common/loader/zjpgd_loader
-CC_INC  += ARM-2D/examples/common/loader/freetype_loader
-CC_INC  += ARM-2D/examples/common/loader/freetype_loader/freetype/include
+CC_INC  += Arm-2D/examples/common/loader
+CC_INC  += Arm-2D/examples/common/loader/tjpgd_loader
+CC_INC  += Arm-2D/examples/common/loader/zjpgd_loader
+CC_INC  += Arm-2D/examples/common/loader/freetype_loader
+CC_INC  += Arm-2D/examples/common/loader/freetype_loader/freetype/include
 
 CC_DEF  := ARM_SECTION\(x\)=
 CC_DEF  += __va_list=va_list
