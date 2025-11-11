@@ -52,7 +52,7 @@ typedef struct system_cfg_t {
         uint16_t bOneSideMode           : 1;
         uint16_t bAutoScaling           : 1;
         uint16_t bHideDefaultLogo       : 1;
-        uint16_t                        : 1;
+        uint16_t bHideLocalDate         : 1;
         uint16_t u2FootnoteLogoAlign    : 2;
         uint16_t                        : 6;
         

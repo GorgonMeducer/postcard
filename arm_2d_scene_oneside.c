@@ -465,31 +465,37 @@ IMPL_PFB_ON_DRAW(__pfb_draw_scene_oneside_handler)
                             arm_lcd_text_set_font((arm_2d_font_t *)&ARM_2D_FONT_CalibriBold46_A8);
                             arm_lcd_text_set_scale(0);
 
-                            time_t now;
-                            time(&now);
-                            struct tm *ptTimeinfo = localtime(&now);
-                            static const char *c_chMonths[] = {
-                                "January",
-                                "February",
-                                "March",
-                                "April",
-                                "May",
-                                "June",
-                                "July",
-                                "August",
-                                "September",
-                                "October",
-                                "November",
-                                "December"
-                            };
-                            
-                            arm_lcd_printf_label(ARM_2D_ALIGN_MIDDLE_LEFT, 
-                                                "%d %s %04d, %s",
-                                                ptTimeinfo->tm_mday,
-                                                c_chMonths[ptTimeinfo->tm_mon],
-                                                ptTimeinfo->tm_year + 1900,
-                                                SYSTEM_CFG.Input.pchEventName
-                                                );
+                            if (SYSTEM_CFG.Input.bHideLocalDate) {
+                                arm_lcd_printf_label(   ARM_2D_ALIGN_MIDDLE_LEFT, 
+                                                        "%s",
+                                                        SYSTEM_CFG.Input.pchEventName);
+                            } else {
+                                time_t now;
+                                time(&now);
+                                struct tm *ptTimeinfo = localtime(&now);
+                                static const char *c_chMonths[] = {
+                                    "January",
+                                    "February",
+                                    "March",
+                                    "April",
+                                    "May",
+                                    "June",
+                                    "July",
+                                    "August",
+                                    "September",
+                                    "October",
+                                    "November",
+                                    "December"
+                                };
+                                
+                                arm_lcd_printf_label(ARM_2D_ALIGN_MIDDLE_LEFT, 
+                                                    "%d %s %04d, %s",
+                                                    ptTimeinfo->tm_mday,
+                                                    c_chMonths[ptTimeinfo->tm_mon],
+                                                    ptTimeinfo->tm_year + 1900,
+                                                    SYSTEM_CFG.Input.pchEventName
+                                                    );
+                            }
                         }
                     } else {
                         __item_line_dock_vertical(70) {}

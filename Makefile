@@ -48,6 +48,7 @@ CC_INC  += Arm-2D/examples/common/loader/freetype_loader/freetype/include
 CC_DEF  := ARM_SECTION\(x\)=
 CC_DEF  += __va_list=va_list
 CC_DEF  += _RTE_=1
+CC_DEF  += ZJD_USR_CFG=\"arm_zjpgd_cfg.h\"
 
 #======================================================================================================================#
 ifeq ($(OS),Windows_NT)

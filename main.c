@@ -240,6 +240,11 @@ arm_2d_err_t process_args(int argc, char* argv[])
             continue;
         }
 
+        if ( 0 == strncmp(argv[n], "--hide_date", 11)) {
+            SYSTEM_CFG.Input.bHideLocalDate = true;
+            continue;
+        }
+
         if ( 0 == strncmp(argv[n], "--oneside", 9)) {
             SYSTEM_CFG.Input.bOneSideMode = true;
             continue;
